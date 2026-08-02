@@ -1,0 +1,68 @@
+---
+type Props = {
+  number: string;
+  title: string;
+  description: string;
+  metadata: string;
+  href: string;
+  ctaLabel: string;
+};
+
+const { number, title, description, metadata, href, ctaLabel } = Astro.props as Props;
+---
+
+<article class="service-row">
+  <a class="service-row__link" href={href}>
+    <span class="service-row__number section-number">{number}</span>
+    <div class="service-row__body">
+      <h3>{title}</h3>
+      <p>{description}</p>
+    </div>
+    <div class="service-row__meta">
+      <span class="data-pill">{metadata}</span>
+      <span class="link-arrow">{ctaLabel}</span>
+    </div>
+  </a>
+</article>
+
+<style>
+  .service-row {
+    border-bottom: var(--border);
+  }
+
+  .service-row:first-child {
+    border-top: var(--border);
+  }
+
+  .service-row__link {
+    display: grid;
+    grid-template-columns: 96px minmax(0, 1.5fr) minmax(0, 0.9fr);
+    gap: var(--space-5);
+    align-items: center;
+    padding-block: clamp(1.35rem, 3vw, 2rem);
+    transition: background-color 200ms ease;
+  }
+
+  .service-row__link:hover,
+  .service-row__link:focus-visible {
+    background: rgba(220, 224, 212, 0.45);
+  }
+
+  .service-row__body {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .service-row__meta {
+    display: grid;
+    gap: var(--space-3);
+    justify-items: start;
+  }
+
+  @media (max-width: 820px) {
+    .service-row__link {
+      grid-template-columns: 1fr;
+      gap: var(--space-4);
+    }
+  }
+</style>

@@ -1,0 +1,127 @@
+---
+import pastureImage from "../assets/images/contact/horse-pasture-atmosphere.jpg";
+import horseCare from "../assets/images/home/horse-care-detail.jpg";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContentPageLayout from "../layouts/ContentPageLayout.astro";
+import EditorialImage from "../components/EditorialImage.astro";
+import FinalContactCta from "../components/FinalContactCta.astro";
+import { copy } from "../data/copy";
+import { canonicalUrl } from "../utils/seo";
+import {
+  createBreadcrumbList,
+  createSportsActivityLocation
+} from "../utils/structuredData";
+
+const breadcrumbs = [
+  { name: "Početna", href: canonicalUrl("/") },
+  { name: "O klubu", href: canonicalUrl("/o-klubu/") }
+];
+---
+
+<BaseLayout
+  title={copy.seo.about.title}
+  description={copy.seo.about.description}
+  pathname="/o-klubu/"
+  structuredData={[
+    createSportsActivityLocation(),
+    createBreadcrumbList(breadcrumbs)
+  ]}
+>
+  <ContentPageLayout
+    number="01"
+    label="O klubu"
+    eyebrow={copy.about.hero.eyebrow}
+    title={copy.about.hero.title}
+    intro={copy.about.hero.intro}
+    ctaLabel={copy.about.hero.cta}
+    ctaHref="/kontakt/"
+    secondaryCtaLabel="Pozovite klub"
+    secondaryCtaHref="tel:+381691662138"
+    breadcrumbs={[
+      { name: "Početna", href: "/" },
+      { name: "O klubu", href: "/o-klubu/" }
+    ]}
+    image={pastureImage}
+    imageAlt="Konj stoji na otvorenom pašnjaku u prirodnom okruženju."
+    tone="sage"
+  />
+
+  <section class="section-shell">
+    <div class="container section-grid">
+      <div class="section-label">
+        <span class="section-number">02</span>
+        <span class="meta-text">Karakter kluba</span>
+      </div>
+
+      <div class="about-ledger">
+        <article class="about-ledger__item">
+          <span class="eyebrow-stack eyebrow">Lokalni klub</span>
+          <h2>{copy.about.character.title}</h2>
+          <p>{copy.about.character.text}</p>
+        </article>
+        <article class="about-ledger__item">
+          <span class="eyebrow-stack eyebrow">Odgovornost</span>
+          <h2>{copy.about.horses.title}</h2>
+          <p>{copy.about.horses.text}</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <EditorialImage
+    number="03"
+    label="Rad sa ljudima"
+    title={copy.about.people.title}
+    text={copy.about.people.text}
+    image={horseCare}
+    alt="Priprema opreme pored konja u mirnom štalskom trenutku."
+    reverse
+  />
+
+  <section class="section-shell">
+    <div class="container section-grid">
+      <div class="section-label">
+        <span class="section-number">04</span>
+        <span class="meta-text">Atmosfera</span>
+      </div>
+
+      <div class="page-title-block">
+        <span class="eyebrow-stack eyebrow">Boravak bez žurbe</span>
+        <h2>{copy.about.atmosphere.title}</h2>
+        <p>{copy.about.atmosphere.text}</p>
+      </div>
+    </div>
+  </section>
+
+  <FinalContactCta
+    number="05"
+    label="Kontakt kluba"
+    title={copy.about.finalCta.title}
+    text={copy.about.finalCta.text}
+    primaryCta={copy.about.finalCta.primaryCta}
+    secondaryCta={copy.about.finalCta.secondaryCta}
+    secondaryHref="/kontakt/"
+  />
+</BaseLayout>
+
+<style>
+  .about-ledger {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .about-ledger__item {
+    display: grid;
+    gap: var(--space-4);
+    padding: clamp(1.4rem, 4vw, 2rem);
+    border: var(--border);
+    background: var(--color-paper-light);
+  }
+
+  @media (max-width: 760px) {
+    .about-ledger {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

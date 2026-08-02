@@ -1,0 +1,64 @@
+---
+import { copy } from "../../data/copy";
+import SectionLabel from "../layout/SectionLabel.astro";
+---
+
+<section class="section-shell">
+  <div class="container section-grid">
+    <SectionLabel number="02" label={copy.home.firstVisit.metadata} />
+
+    <div class="first-visit">
+      <div class="first-visit__intro flow-lg">
+        <span class="eyebrow-stack eyebrow">{copy.home.firstVisit.metadata}</span>
+        <h2>{copy.home.firstVisit.title}</h2>
+        <p>{copy.home.firstVisit.intro}</p>
+        <a class="link-arrow" href="/kontakt/#kontakt-forma">{copy.home.firstVisit.cta}</a>
+      </div>
+
+      <ol class="first-visit__steps">
+        {copy.home.firstVisit.steps.map((step, index) => (
+          <li>
+            <span class="section-number">{String(index + 1).padStart(2, "0")}</span>
+            <div class="flow">
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .first-visit {
+    display: grid;
+    grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+  }
+
+  .first-visit__steps {
+    border-top: var(--border);
+  }
+
+  .first-visit__steps li {
+    display: grid;
+    grid-template-columns: 72px 1fr;
+    gap: var(--space-4);
+    padding-block: var(--space-5);
+    border-bottom: var(--border);
+  }
+
+  @media (max-width: 860px) {
+    .first-visit {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .first-visit__steps li {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

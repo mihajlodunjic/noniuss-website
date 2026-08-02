@@ -1,0 +1,58 @@
+---
+import SiteFooter from "../components/layout/SiteFooter.astro";
+import SiteHeader from "../components/layout/SiteHeader.astro";
+import "../styles/global.css";
+import { business } from "../data/business";
+import { copy } from "../data/copy";
+import { canonicalUrl, defaultOgImage } from "../utils/seo";
+
+type Props = {
+  title: string;
+  description: string;
+  pathname: string;
+  ogImage?: string;
+  structuredData?: unknown[];
+};
+
+const { title, description, pathname, ogImage, structuredData = [] } = Astro.props as Props;
+const canonical = canonicalUrl(pathname);
+const resolvedOgImage = ogImage ? canonicalUrl(ogImage) : defaultOgImage;
+---
+
+<!doctype html>
+<html lang="sr-Latn">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#F3EFE4" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={business.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:locale" content="sr_RS" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+    {structuredData.map((entry) => (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(entry)} />
+    ))}
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main-content">{copy.navigation.skipLink}</a>
+    <SiteHeader pathname={pathname} />
+    <main id="main-content" data-main>
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

@@ -1,0 +1,155 @@
+---
+import ridingLesson from "../assets/images/school/riding-lesson-beginner.jpg";
+import humanHorseTouch from "../assets/images/home/human-horse-touch.jpg";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContentPageLayout from "../layouts/ContentPageLayout.astro";
+import FinalContactCta from "../components/FinalContactCta.astro";
+import EditorialImage from "../components/EditorialImage.astro";
+import { copy } from "../data/copy";
+import { canonicalUrl } from "../utils/seo";
+import {
+  createBreadcrumbList,
+  createSportsActivityLocation
+} from "../utils/structuredData";
+
+const breadcrumbs = [
+  { name: "Početna", href: canonicalUrl("/") },
+  { name: "Škola jahanja", href: canonicalUrl("/skola-jahanja/") }
+];
+---
+
+<BaseLayout
+  title={copy.seo.school.title}
+  description={copy.seo.school.description}
+  pathname="/skola-jahanja/"
+  structuredData={[
+    createSportsActivityLocation(),
+    createBreadcrumbList(breadcrumbs)
+  ]}
+>
+  <ContentPageLayout
+    number="01"
+    label="Škola jahanja"
+    eyebrow={copy.school.hero.eyebrow}
+    title={copy.school.hero.title}
+    intro={copy.school.hero.intro}
+    ctaLabel={copy.school.hero.cta}
+    ctaHref="/kontakt/#kontakt-forma"
+    secondaryCtaLabel="Pozovite za termin"
+    secondaryCtaHref="tel:+381691662138"
+    breadcrumbs={[
+      { name: "Početna", href: "/" },
+      { name: "Škola jahanja", href: "/skola-jahanja/" }
+    ]}
+    image={ridingLesson}
+    imageAlt="Početnica uči položaj u sedlu tokom časa jahanja."
+  />
+
+  <section class="section-shell">
+    <div class="container section-grid">
+      <div class="section-label">
+        <span class="section-number">02</span>
+        <span class="meta-text">{copy.school.start.metadata}</span>
+      </div>
+
+      <div class="flow-lg">
+        <span class="eyebrow-stack eyebrow">{copy.school.start.metadata}</span>
+        <h2>{copy.school.start.title}</h2>
+        <p>{copy.school.start.text}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-shell">
+    <div class="container section-grid">
+      <div class="section-label">
+        <span class="section-number">03</span>
+        <span class="meta-text">Postepeno učenje</span>
+      </div>
+
+      <div class="flow-lg">
+        <div class="page-title-block">
+          <span class="eyebrow-stack eyebrow">Osnove u sedlu</span>
+          <h2>{copy.school.learning.title}</h2>
+        </div>
+
+        <div class="school-grid">
+          {copy.school.learning.items.map((item) => (
+            <article class="school-grid__card">
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <EditorialImage
+    number="04"
+    label="Kome je namenjena"
+    title={copy.school.audience.title}
+    text={[copy.school.audience.children, copy.school.audience.adults]}
+    aside={copy.school.audience.returning}
+    image={humanHorseTouch}
+    alt="Blizak kontakt osobe i konja pre početka jahanja."
+    reverse
+    tone="sage"
+  />
+
+  <section class="section-shell">
+    <div class="container section-grid">
+      <div class="section-label">
+        <span class="section-number">05</span>
+        <span class="meta-text">Pre prvog časa</span>
+      </div>
+
+      <div class="flow-lg">
+        <div class="page-title-block">
+          <span class="eyebrow-stack eyebrow">Dogovor unapred</span>
+          <h2>{copy.school.beforeLesson.title}</h2>
+          <p>{copy.school.beforeLesson.intro}</p>
+        </div>
+
+        <ul class="list-bullets">
+          {copy.school.beforeLesson.points.map((point) => (
+            <li>{point}</li>
+          ))}
+        </ul>
+
+        <a class="link-arrow" href="tel:+381691662138">{copy.school.beforeLesson.cta}</a>
+      </div>
+    </div>
+  </section>
+
+  <FinalContactCta
+    number="06"
+    label="Prvi korak"
+    title={copy.school.finalCta.title}
+    text={copy.school.finalCta.text}
+    primaryCta={copy.school.finalCta.primaryCta}
+    secondaryCta={copy.school.finalCta.secondaryCta}
+  />
+</BaseLayout>
+
+<style>
+  .school-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .school-grid__card {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border: var(--border);
+    background: var(--color-paper-light);
+  }
+
+  @media (max-width: 760px) {
+    .school-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

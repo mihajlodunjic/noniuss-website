@@ -1,0 +1,68 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContentPageLayout from "../layouts/ContentPageLayout.astro";
+import ContactDetails from "../components/contact/ContactDetails.astro";
+import PracticalInquiry from "../components/contact/PracticalInquiry.astro";
+import ContactForm from "../components/contact/ContactForm.astro";
+import LocationPanel from "../components/contact/LocationPanel.astro";
+import PracticalFaq from "../components/contact/PracticalFaq.astro";
+import { copy } from "../data/copy";
+import { faqs } from "../data/faqs";
+import { canonicalUrl } from "../utils/seo";
+import {
+  createBreadcrumbList,
+  createFaqMarkup,
+  createSportsActivityLocation
+} from "../utils/structuredData";
+
+const breadcrumbs = [
+  { name: "Početna", href: canonicalUrl("/") },
+  { name: "Lokacija i kontakt", href: canonicalUrl("/kontakt/") }
+];
+---
+
+<BaseLayout
+  title={copy.seo.contact.title}
+  description={copy.seo.contact.description}
+  pathname="/kontakt/"
+  structuredData={[
+    createSportsActivityLocation(),
+    createBreadcrumbList(breadcrumbs),
+    createFaqMarkup(faqs)
+  ]}
+>
+  <ContentPageLayout
+    number="01"
+    label="Lokacija i kontakt"
+    eyebrow={copy.contact.hero.eyebrow}
+    title={copy.contact.hero.title}
+    intro={copy.contact.hero.intro}
+    ctaLabel={copy.contact.hero.primaryCta}
+    ctaHref="tel:+381691662138"
+    secondaryCtaLabel={copy.contact.hero.secondaryCta}
+    secondaryCtaHref="https://www.google.com/maps/search/?api=1&query=Gornje%20Me%C4%91urovo%20bb%2C%2018000%20Ni%C5%A1"
+    breadcrumbs={[
+      { name: "Početna", href: "/" },
+      { name: "Lokacija i kontakt", href: "/kontakt/" }
+    ]}
+    asideLines={[
+      "Cena i trajanje dogovaraju se direktno sa klubom.",
+      "Uzrast deteta i iskustvo recite već u prvoj poruci.",
+      "Dolazak je uz prethodni dogovor."
+    ]}
+  />
+
+  <ContactDetails />
+  <PracticalInquiry />
+  <ContactForm />
+  <LocationPanel
+    number="04"
+    label="Lokacija"
+    title={copy.contact.location.title}
+    text={copy.contact.location.text}
+    address={copy.contact.location.address}
+    primaryCta={copy.contact.location.cta}
+    compact
+  />
+  <PracticalFaq />
+</BaseLayout>

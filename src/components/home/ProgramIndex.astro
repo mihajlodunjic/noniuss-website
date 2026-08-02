@@ -1,0 +1,33 @@
+---
+import { copy } from "../../data/copy";
+import { services } from "../../data/services";
+import SectionLabel from "../layout/SectionLabel.astro";
+import ServiceIntro from "../ServiceIntro.astro";
+---
+
+<section class="section-shell" id="programi">
+  <div class="container section-grid">
+    <SectionLabel number="01" label={copy.home.programs.metadata} />
+
+    <div class="program-index flow-lg">
+      <div class="page-title-block">
+        <span class="eyebrow-stack eyebrow">{copy.home.programs.metadata}</span>
+        <h2>{copy.home.programs.title}</h2>
+        <p>{copy.home.programs.intro}</p>
+      </div>
+
+      <div>
+        {services.map((service, index) => (
+          <ServiceIntro
+            number={String(index + 1).padStart(2, "0")}
+            title={service.title}
+            description={service.shortDescription}
+            metadata={service.audience}
+            href={service.href}
+            ctaLabel={service.ctaLabel}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+</section>

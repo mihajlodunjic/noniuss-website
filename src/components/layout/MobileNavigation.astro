@@ -1,0 +1,345 @@
+---
+import type { NavigationItem } from "../../data/navigation";
+
+type Props = {
+  navigation: readonly NavigationItem[];
+  pathname: string;
+  phoneHref: string;
+  phoneLabel: string;
+  openLabel: string;
+  closeLabel: string;
+  locationLabel: string;
+  arrivalNote: string;
+};
+
+const {
+  navigation,
+  pathname,
+  phoneHref,
+  phoneLabel,
+  openLabel,
+  closeLabel,
+  locationLabel,
+  arrivalNote
+} = Astro.props as Props;
+
+const normalize = (href: string) => (href === "/" ? href : href.replace(/\/+$/, "/"));
+const currentPath = normalize(pathname || "/");
+---
+
+<div class="mobile-nav">
+  <button
+    class="mobile-toggle"
+    type="button"
+    aria-expanded="false"
+    aria-controls="mobile-nav-panel"
+    aria-label={openLabel}
+    data-menu-toggle
+  >
+    <span class="mobile-toggle__line"></span>
+    <span class="mobile-toggle__line"></span>
+    <span class="mobile-toggle__line"></span>
+  </button>
+
+  <div class="mobile-overlay" data-menu-overlay hidden>
+    <div class="mobile-overlay__backdrop" data-menu-backdrop aria-hidden="true"></div>
+    <div
+      class="mobile-overlay__panel"
+      id="mobile-nav-panel"
+      data-menu-panel
+      tabindex="-1"
+      aria-hidden="true"
+    >
+      <div class="mobile-overlay__meta">
+        <span class="meta-text">{locationLabel}</span>
+        <p>{arrivalNote}</p>
+      </div>
+
+      <a class="button button--primary mobile-overlay__call" href={phoneHref} data-menu-link>
+        {phoneLabel}
+      </a>
+
+      <nav aria-label="Mobilna navigacija">
+        <ul class="mobile-overlay__list">
+          {
+            navigation.map((item) => {
+              const href = normalize(item.href);
+              const isCurrent = href === currentPath;
+
+              return (
+                <li>
+                  <a
+                    href={item.href}
+                    aria-current={isCurrent ? "page" : undefined}
+                    data-menu-link
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ openLabel, closeLabel }} is:inline>
+  const mobileNavRoot = document.querySelector(".mobile-nav");
+  const menuToggle = mobileNavRoot?.querySelector("[data-menu-toggle]");
+  const menuOverlay = mobileNavRoot?.querySelector("[data-menu-overlay]");
+  const menuPanel = mobileNavRoot?.querySelector("[data-menu-panel]");
+  const menuBackdrop = mobileNavRoot?.querySelector("[data-menu-backdrop]");
+  const menuLinks = mobileNavRoot?.querySelectorAll("[data-menu-link]");
+  const inertTargets = Array.from(
+    document.querySelectorAll("[data-main], [data-site-footer]")
+  );
+  let previousFocus = null;
+  let closeTimer = null;
+  let shouldReturnFocus = true;
+
+  const getFocusableElements = () =>
+    Array.from(
+      menuPanel?.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      ) || []
+    );
+
+  const setInert = (state) => {
+    inertTargets.forEach((target) => {
+      target.inert = state;
+    });
+  };
+
+  const finishClose = () => {
+    if (!menuOverlay || !menuPanel || !menuToggle) return;
+
+    menuOverlay.hidden = true;
+    menuToggle.dataset.open = "false";
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", openLabel);
+    menuPanel.setAttribute("aria-hidden", "true");
+    menuOverlay.dataset.state = "closed";
+    document.body.classList.remove("menu-open");
+    document.documentElement.classList.remove("menu-open");
+    setInert(false);
+
+    if (shouldReturnFocus && previousFocus instanceof HTMLElement) {
+      previousFocus.focus();
+    } else if (shouldReturnFocus) {
+      menuToggle.focus();
+    }
+  };
+
+  const closeMenu = ({ returnFocus = true } = {}) => {
+    if (!menuOverlay || !menuPanel || !menuToggle) return;
+    if (closeTimer) clearTimeout(closeTimer);
+
+    shouldReturnFocus = returnFocus;
+    menuOverlay.dataset.state = "closing";
+    menuPanel.setAttribute("aria-hidden", "true");
+    menuToggle.dataset.open = "false";
+    menuToggle.setAttribute("aria-expanded", "false");
+    menuToggle.setAttribute("aria-label", openLabel);
+    document.body.classList.remove("menu-open");
+    document.documentElement.classList.remove("menu-open");
+    setInert(false);
+    document.removeEventListener("keydown", onMenuKeydown);
+    closeTimer = window.setTimeout(finishClose, 220);
+  };
+
+  const openMenu = () => {
+    if (!menuOverlay || !menuPanel || !menuToggle) return;
+    if (closeTimer) clearTimeout(closeTimer);
+
+    previousFocus = document.activeElement;
+    shouldReturnFocus = true;
+    menuOverlay.hidden = false;
+    menuOverlay.dataset.state = "open";
+    menuToggle.dataset.open = "true";
+    menuToggle.setAttribute("aria-expanded", "true");
+    menuToggle.setAttribute("aria-label", closeLabel);
+    menuPanel.setAttribute("aria-hidden", "false");
+    document.body.classList.add("menu-open");
+    document.documentElement.classList.add("menu-open");
+    setInert(true);
+    document.addEventListener("keydown", onMenuKeydown);
+
+    window.requestAnimationFrame(() => {
+      const focusable = getFocusableElements();
+      (focusable[0] || menuPanel).focus();
+    });
+  };
+
+  const onMenuKeydown = (event) => {
+    if (!menuPanel || !menuToggle) return;
+
+    if (event.key === "Escape") {
+      event.preventDefault();
+      closeMenu();
+      return;
+    }
+
+    if (event.key !== "Tab") return;
+
+    const focusable = getFocusableElements();
+    if (!focusable.length) {
+      event.preventDefault();
+      menuPanel.focus();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
+  menuToggle?.addEventListener("click", () => {
+    const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
+    if (isOpen) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  menuBackdrop?.addEventListener("click", () => closeMenu());
+  menuLinks?.forEach((link) =>
+    link.addEventListener("click", () => closeMenu({ returnFocus: false }))
+  );
+
+  const desktopMedia = window.matchMedia("(min-width: 960px)");
+  const onMediaChange = (event) => {
+    if (event.matches && menuToggle?.getAttribute("aria-expanded") === "true") {
+      closeMenu({ returnFocus: false });
+    }
+  };
+
+  desktopMedia.addEventListener("change", onMediaChange);
+</script>
+
+<style>
+  .mobile-nav {
+    display: none;
+  }
+
+  .mobile-toggle {
+    position: relative;
+    display: inline-flex;
+    width: 52px;
+    height: 52px;
+    align-items: center;
+    justify-content: center;
+    border: var(--border);
+    border-radius: var(--radius-xs);
+    background: var(--color-paper-light);
+  }
+
+  .mobile-toggle__line {
+    position: absolute;
+    width: 20px;
+    height: 2px;
+    background: var(--color-ink);
+    transition:
+      transform 220ms var(--ease-out),
+      opacity 220ms ease;
+  }
+
+  .mobile-toggle__line:nth-child(1) {
+    transform: translateY(-6px);
+  }
+
+  .mobile-toggle__line:nth-child(3) {
+    transform: translateY(6px);
+  }
+
+  .mobile-toggle[data-open="true"] .mobile-toggle__line:nth-child(1) {
+    transform: rotate(45deg);
+  }
+
+  .mobile-toggle[data-open="true"] .mobile-toggle__line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-toggle[data-open="true"] .mobile-toggle__line:nth-child(3) {
+    transform: rotate(-45deg);
+  }
+
+  .mobile-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+  }
+
+  .mobile-overlay__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(21, 22, 18, 0.34);
+  }
+
+  .mobile-overlay__panel {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: start;
+    gap: var(--space-6);
+    padding: 7rem 1.4rem 2rem;
+    background: var(--color-paper);
+    transform: translateY(-12px);
+    opacity: 0;
+    transition:
+      opacity 220ms ease,
+      transform 220ms var(--ease-out);
+    box-shadow: var(--shadow-menu);
+  }
+
+  .mobile-overlay[data-state="open"] .mobile-overlay__panel {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .mobile-overlay__meta {
+    display: grid;
+    gap: var(--space-2);
+    padding-right: 2.5rem;
+    color: var(--color-muted-text);
+  }
+
+  .mobile-overlay__call {
+    width: 100%;
+  }
+
+  .mobile-overlay__list {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .mobile-overlay__list a {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    padding-block: 0.25rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.85rem, 8vw, 2.5rem);
+    line-height: 1;
+    border-bottom: var(--border);
+  }
+
+  .mobile-overlay__list a[aria-current="page"] {
+    color: var(--color-saddle);
+  }
+
+  @media (max-width: 959px) {
+    .mobile-nav {
+      display: block;
+    }
+  }
+</style>

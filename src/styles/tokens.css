@@ -1,0 +1,58 @@
+:root {
+  --color-ink: #151612;
+  --color-paper: #f3efe4;
+  --color-paper-light: #fbf9f3;
+  --color-forest: #26382e;
+  --color-forest-hover: #1c2b22;
+  --color-saddle: #925e38;
+  --color-sage: #dce0d4;
+  --color-line: #c9c2b3;
+  --color-muted-text: #67675f;
+  --color-white: #ffffff;
+  --color-error: #9b332c;
+  --color-success: #2e6745;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Source Sans 3", "Segoe UI", Arial, sans-serif;
+  --font-meta: "IBM Plex Mono", "Courier New", monospace;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 72px;
+  --space-9: 96px;
+  --space-10: 144px;
+  --radius-xs: 4px;
+  --radius-pill: 999px;
+  --shadow-menu: 0 16px 40px rgba(21, 22, 18, 0.14);
+  --border: 1px solid var(--color-line);
+  --border-strong: 2px solid var(--color-ink);
+  --page-max: 1440px;
+  --container-max: 1240px;
+  --gutter: 24px;
+  --section-gap: clamp(4rem, 8vw, 9rem);
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --h1-size: clamp(2.75rem, 7vw, 6.4rem);
+  --h2-size: clamp(2rem, 4.5vw, 4.1rem);
+  --h3-size: clamp(1.25rem, 2vw, 1.65rem);
+  --lead-size: clamp(1.08rem, 1rem + 0.55vw, 1.35rem);
+  --body-size: clamp(1rem, 0.96rem + 0.2vw, 1.08rem);
+  --small-size: clamp(0.82rem, 0.8rem + 0.15vw, 0.9rem);
+  --meta-size: clamp(0.72rem, 0.7rem + 0.1vw, 0.8rem);
+  --focus-ring: 2px solid var(--color-saddle);
+}
+
+@media (max-width: 768px) {
+  :root {
+    --gutter: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --h1-size: clamp(2.65rem, 12vw, 3.25rem);
+    --h2-size: clamp(2rem, 9vw, 2.6rem);
+  }
+}

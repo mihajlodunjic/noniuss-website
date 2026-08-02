@@ -1,0 +1,64 @@
+---
+import { faqs } from "../../data/faqs";
+import SectionLabel from "../layout/SectionLabel.astro";
+---
+
+<section class="section-shell">
+  <div class="container section-grid">
+    <SectionLabel number="05" label="Praktična pitanja" />
+
+    <div class="faq-block">
+      <div class="page-title-block">
+        <span class="eyebrow-stack eyebrow">Česta pitanja</span>
+        <h2>Praktična pitanja</h2>
+      </div>
+
+      <div class="ledger-list">
+        {faqs.map((faq) => (
+          <details class="faq-block__item">
+            <summary>{faq.question}</summary>
+            <p>{faq.answer}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-block {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .faq-block__item {
+    padding-block: var(--space-4);
+  }
+
+  .faq-block__item summary {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    align-items: center;
+    min-height: 44px;
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2vw, 1.55rem);
+    cursor: pointer;
+  }
+
+  .faq-block__item summary::after {
+    content: "+";
+    font-family: var(--font-body);
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+
+  .faq-block__item[open] summary::after {
+    content: "−";
+  }
+
+  .faq-block__item p {
+    padding-top: var(--space-3);
+    color: var(--color-muted-text);
+  }
+</style>

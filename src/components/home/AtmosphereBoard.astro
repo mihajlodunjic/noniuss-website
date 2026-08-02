@@ -1,0 +1,101 @@
+---
+import { Picture } from "astro:assets";
+import horseCare from "../../assets/images/home/horse-care-detail.jpg";
+import horseHead from "../../assets/images/home/horse-head-stable.jpg";
+import pasture from "../../assets/images/contact/horse-pasture-atmosphere.jpg";
+import { copy } from "../../data/copy";
+import SectionLabel from "../layout/SectionLabel.astro";
+
+const images = [
+  {
+    src: horseCare,
+    alt: "Ruka priprema opremu pored konja u štalskom ambijentu."
+  },
+  {
+    src: horseHead,
+    alt: "Blizak kadar glave konja koji mirno gleda kroz vrata boksa."
+  },
+  {
+    src: pasture,
+    alt: "Konj stoji u travi na otvorenom pašnjaku."
+  }
+];
+---
+
+<section class="section-shell">
+  <div class="container section-grid">
+    <SectionLabel number="05" label={copy.home.atmosphere.metadata} />
+
+    <div class="atmosphere">
+      <div class="page-title-block">
+        <span class="eyebrow-stack eyebrow">{copy.home.atmosphere.metadata}</span>
+        <h2>{copy.home.atmosphere.title}</h2>
+        <p>{copy.home.atmosphere.intro}</p>
+      </div>
+
+      <div class="atmosphere__board">
+        {copy.home.atmosphere.notes.map((note, index) => (
+          <article class="atmosphere__item">
+            <Picture
+              src={images[index].src}
+              alt={images[index].alt}
+              formats={["webp"]}
+              widths={[420, 720, 1080]}
+              sizes="(max-width: 820px) 100vw, 31vw"
+              loading="lazy"
+            />
+            <div class="flow">
+              <h3>{note.title}</h3>
+              <p>{note.text}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .atmosphere {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .atmosphere__board {
+    display: grid;
+    grid-template-columns: 1.1fr 0.82fr 0.92fr;
+    gap: var(--space-5);
+  }
+
+  .atmosphere__item {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .atmosphere__item :global(img) {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .atmosphere__item:nth-child(1) :global(img) {
+    aspect-ratio: 4 / 5;
+    object-position: center;
+  }
+
+  .atmosphere__item:nth-child(2) :global(img) {
+    aspect-ratio: 1 / 1;
+    object-position: center 40%;
+  }
+
+  .atmosphere__item:nth-child(3) :global(img) {
+    aspect-ratio: 3 / 4;
+    object-position: center;
+  }
+
+  @media (max-width: 900px) {
+    .atmosphere__board {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

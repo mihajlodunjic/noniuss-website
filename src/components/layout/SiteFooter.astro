@@ -1,0 +1,139 @@
+---
+import { business } from "../../data/business";
+import { copy } from "../../data/copy";
+import { navigation } from "../../data/navigation";
+
+const currentYear = new Date().getFullYear();
+---
+
+<footer class="site-footer surface-ink" data-site-footer>
+  <div class="container site-footer__inner">
+    <div class="site-footer__lead">
+      <span class="eyebrow-stack eyebrow">{business.locationLabel}</span>
+      <h2>{business.name}</h2>
+      <p>{copy.footer.description}</p>
+      <p class="site-footer__note">{copy.footer.note}</p>
+    </div>
+
+    <div class="site-footer__columns">
+      <div class="site-footer__group">
+        <h3>{copy.footer.navGroup}</h3>
+        <ul>
+          {navigation.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="site-footer__group">
+        <h3>{copy.footer.contactGroup}</h3>
+        <ul>
+          <li>
+            <a href={business.phoneUri}>{business.displayPhone}</a>
+          </li>
+          <li>
+            <a href={`mailto:${business.email}`}>{business.email}</a>
+          </li>
+          <li>
+            <a href={business.instagramUrl} target="_blank" rel="noreferrer">
+              {business.instagramHandle}
+            </a>
+          </li>
+          <li>{business.address}, {business.postalCode} {business.city}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="site-footer__bottom">
+    <div class="container site-footer__bottom-inner">
+      <p>© {currentYear} Konjički klub Nonius. Sva prava zadržana.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-top: clamp(4rem, 9vw, 7rem);
+  }
+
+  .site-footer__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
+    gap: clamp(2rem, 6vw, 6rem);
+    padding-bottom: var(--space-8);
+  }
+
+  .site-footer__lead {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .site-footer__lead h2 {
+    max-width: 10ch;
+  }
+
+  .site-footer__lead p {
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .site-footer__note {
+    font-family: var(--font-meta);
+    font-size: var(--small-size);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.66);
+  }
+
+  .site-footer__columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+    align-content: start;
+  }
+
+  .site-footer__group {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .site-footer__group h3 {
+    font-size: 1.1rem;
+    font-family: var(--font-meta);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .site-footer__group ul {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .site-footer__group a {
+    border-bottom: 1px solid transparent;
+  }
+
+  .site-footer__group a:hover,
+  .site-footer__group a:focus-visible {
+    border-bottom-color: currentColor;
+  }
+
+  .site-footer__bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+  }
+
+  .site-footer__bottom-inner {
+    padding-block: var(--space-4);
+    color: rgba(255, 255, 255, 0.62);
+    font-size: var(--small-size);
+  }
+
+  @media (max-width: 820px) {
+    .site-footer__inner,
+    .site-footer__columns {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

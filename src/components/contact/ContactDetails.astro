@@ -1,0 +1,102 @@
+---
+import { business } from "../../data/business";
+import { copy } from "../../data/copy";
+import SectionLabel from "../layout/SectionLabel.astro";
+---
+
+<section class="section-shell">
+  <div class="container section-grid">
+    <SectionLabel number="01" label="Kontakt podaci" />
+
+    <div class="contact-details">
+      <div class="page-title-block">
+        <span class="eyebrow-stack eyebrow">Direktan kontakt</span>
+        <h2>{copy.contact.details.title}</h2>
+      </div>
+
+      <dl class="contact-details__grid">
+        <div class="contact-details__row">
+          <dt>{copy.contact.details.phoneLabel}</dt>
+          <dd>
+            <a href={business.phoneUri}>{business.displayPhone}</a>
+          </dd>
+        </div>
+
+        <div class="contact-details__row">
+          <dt>{copy.contact.details.emailLabel}</dt>
+          <dd>
+            <a href={`mailto:${business.email}`}>{business.email}</a>
+          </dd>
+        </div>
+
+        <div class="contact-details__row">
+          <dt>{copy.contact.details.instagramLabel}</dt>
+          <dd>
+            <a href={business.instagramUrl} target="_blank" rel="noreferrer">
+              {business.instagramHandle}
+            </a>
+          </dd>
+        </div>
+
+        <div class="contact-details__row">
+          <dt>{copy.contact.details.locationLabel}</dt>
+          <dd>{business.address}, {business.postalCode} {business.city}</dd>
+        </div>
+      </dl>
+
+      <div class="contact-details__actions">
+        <a class="button button--primary" href={business.phoneUri}>
+          {copy.contact.details.phoneCta}
+        </a>
+        <a class="link-arrow" href={business.instagramUrl} target="_blank" rel="noreferrer">
+          {copy.contact.details.instagramCta}
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-details {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .contact-details__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+  }
+
+  .contact-details__row {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-4);
+    border: var(--border);
+    background: var(--color-paper-light);
+  }
+
+  .contact-details__row dt {
+    font-family: var(--font-meta);
+    font-size: var(--meta-size);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted-text);
+  }
+
+  .contact-details__row dd a {
+    font-weight: 600;
+  }
+
+  .contact-details__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  @media (max-width: 700px) {
+    .contact-details__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

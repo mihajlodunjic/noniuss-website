@@ -1,0 +1,46 @@
+---
+import FinalContactCta from "../components/FinalContactCta.astro";
+import HomeHero from "../components/home/HomeHero.astro";
+import ProgramIndex from "../components/home/ProgramIndex.astro";
+import FirstVisitSteps from "../components/home/FirstVisitSteps.astro";
+import RidingApproach from "../components/home/RidingApproach.astro";
+import TrailFeature from "../components/home/TrailFeature.astro";
+import AtmosphereBoard from "../components/home/AtmosphereBoard.astro";
+import ContactPreparation from "../components/home/ContactPreparation.astro";
+import LocationPanel from "../components/contact/LocationPanel.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { copy } from "../data/copy";
+import { createSportsActivityLocation } from "../utils/structuredData";
+---
+
+<BaseLayout
+  title={copy.seo.home.title}
+  description={copy.seo.home.description}
+  pathname="/"
+  structuredData={[createSportsActivityLocation()]}
+>
+  <HomeHero />
+  <ProgramIndex />
+  <FirstVisitSteps />
+  <RidingApproach />
+  <TrailFeature />
+  <AtmosphereBoard />
+  <ContactPreparation />
+  <LocationPanel
+    number="07"
+    label={copy.home.location.metadata}
+    title={copy.home.location.title}
+    text={copy.home.location.text}
+    address={copy.home.location.address}
+    primaryCta={copy.home.location.primaryCta}
+    secondaryCta={copy.home.location.secondaryCta}
+  />
+  <FinalContactCta
+    number="08"
+    label={copy.home.finalCta.metadata}
+    title={copy.home.finalCta.title}
+    text={copy.home.finalCta.text}
+    primaryCta={copy.home.finalCta.primaryCta}
+    secondaryCta={copy.home.finalCta.secondaryCta}
+  />
+</BaseLayout>

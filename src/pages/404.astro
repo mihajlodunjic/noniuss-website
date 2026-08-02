@@ -1,0 +1,53 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { copy } from "../data/copy";
+import { createSportsActivityLocation } from "../utils/structuredData";
+---
+
+<BaseLayout
+  title="Greška 404 | Konjički klub Nonius"
+  description={copy.notFound.text}
+  pathname="/404.html"
+  structuredData={[createSportsActivityLocation()]}
+>
+  <section class="not-found section-shell">
+    <div class="container not-found__inner">
+      <div class="section-label">
+        <span class="section-number">404</span>
+        <span class="meta-text">{copy.notFound.metadata}</span>
+      </div>
+      <div class="flow-lg">
+        <span class="eyebrow-stack eyebrow">{copy.notFound.metadata}</span>
+        <h1>{copy.notFound.title}</h1>
+        <p class="lead">{copy.notFound.text}</p>
+        <div class="not-found__actions">
+          <a class="button button--primary" href="/">{copy.notFound.primaryCta}</a>
+          <a class="link-arrow" href="/kontakt/">{copy.notFound.secondaryCta}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 110px) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+    min-height: 55vh;
+  }
+
+  .not-found__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  @media (max-width: 720px) {
+    .not-found__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,146 @@
+---
+import trailImage from "../assets/images/trail/trail-riding-mountain-path.jpg";
+import ridersForest from "../assets/images/home/hero-riders-forest.jpg";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContentPageLayout from "../layouts/ContentPageLayout.astro";
+import EditorialImage from "../components/EditorialImage.astro";
+import FinalContactCta from "../components/FinalContactCta.astro";
+import { copy } from "../data/copy";
+import { canonicalUrl } from "../utils/seo";
+import {
+  createBreadcrumbList,
+  createSportsActivityLocation
+} from "../utils/structuredData";
+
+const breadcrumbs = [
+  { name: "Početna", href: canonicalUrl("/") },
+  { name: "Terensko jahanje", href: canonicalUrl("/terensko-jahanje/") }
+];
+---
+
+<BaseLayout
+  title={copy.seo.trail.title}
+  description={copy.seo.trail.description}
+  pathname="/terensko-jahanje/"
+  structuredData={[
+    createSportsActivityLocation(),
+    createBreadcrumbList(breadcrumbs)
+  ]}
+>
+  <ContentPageLayout
+    number="01"
+    label="Jahanje u prirodi"
+    eyebrow={copy.trail.hero.eyebrow}
+    title={copy.trail.hero.title}
+    intro={copy.trail.hero.intro}
+    ctaLabel={copy.trail.hero.cta}
+    ctaHref="/kontakt/#kontakt-forma"
+    secondaryCtaLabel="Pozovite klub"
+    secondaryCtaHref="tel:+381691662138"
+    breadcrumbs={[
+      { name: "Početna", href: "/" },
+      { name: "Terensko jahanje", href: "/terensko-jahanje/" }
+    ]}
+    image={trailImage}
+    imageAlt="Jahač prati prirodni put okružen zelenilom."
+    tone="ink"
+  />
+
+  <EditorialImage
+    number="02"
+    label={copy.trail.beginner.metadata}
+    title={copy.trail.beginner.title}
+    text={copy.trail.beginner.text}
+    image={ridersForest}
+    alt="Dvoje jahača prati šumski put u mirnom tempu."
+    caption="Fotografija predstavlja atmosferu aktivnosti, ne stvarni klub."
+  />
+
+  <section class="section-shell">
+    <div class="container section-grid">
+      <div class="section-label">
+        <span class="section-number">03</span>
+        <span class="meta-text">{copy.trail.advanced.metadata}</span>
+      </div>
+
+      <div class="trail-ledger">
+        <div class="page-title-block">
+          <span class="eyebrow-stack eyebrow">{copy.trail.advanced.metadata}</span>
+          <h2>{copy.trail.advanced.title}</h2>
+          <p>{copy.trail.advanced.text}</p>
+        </div>
+
+        <div class="trail-ledger__panel">
+          <h3>{copy.trail.scheduling.title}</h3>
+          <p>{copy.trail.scheduling.text}</p>
+          <ul class="trail-ledger__list">
+            {copy.trail.scheduling.points.map((point, index) => (
+              <li>
+                <span class="section-number">{String(index + 1).padStart(2, "0")}</span>
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-shell trail-prep">
+    <div class="container section-grid">
+      <div class="section-label">
+        <span class="section-number">04</span>
+        <span class="meta-text">Bezbedna priprema</span>
+      </div>
+
+      <div class="trail-prep__copy flow-lg">
+        <span class="eyebrow-stack eyebrow">Pre polaska</span>
+        <h2>{copy.trail.prep.title}</h2>
+        <p>{copy.trail.prep.text}</p>
+        <a class="button button--primary" href="/kontakt/#kontakt-forma">{copy.trail.prep.cta}</a>
+      </div>
+    </div>
+  </section>
+
+  <FinalContactCta
+    number="05"
+    label="Dogovor termina"
+    title={copy.trail.finalCta.title}
+    text={copy.trail.finalCta.text}
+    primaryCta={copy.trail.finalCta.primaryCta}
+    secondaryCta={copy.trail.finalCta.secondaryCta}
+  />
+</BaseLayout>
+
+<style>
+  .trail-ledger {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .trail-ledger__panel {
+    display: grid;
+    gap: var(--space-4);
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+    border: var(--border);
+    background: var(--color-paper-light);
+  }
+
+  .trail-ledger__list {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .trail-ledger__list li {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: var(--space-3);
+    align-items: start;
+    padding-bottom: var(--space-3);
+    border-bottom: var(--border);
+  }
+
+  .trail-prep {
+    background: rgba(220, 224, 212, 0.52);
+  }
+</style>

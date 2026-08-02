@@ -1,0 +1,218 @@
+---
+import { business } from "../../data/business";
+import { copy } from "../../data/copy";
+import { navigation } from "../../data/navigation";
+import MobileNavigation from "./MobileNavigation.astro";
+
+const { pathname = "/" } = Astro.props as { pathname?: string };
+const normalize = (href: string) => (href === "/" ? href : href.replace(/\/+$/, "/"));
+const currentPath = normalize(pathname);
+---
+
+<header class="site-header" data-site-header>
+  <div class="site-header__inner page-frame">
+    <a class="brand" href="/" aria-label={business.fullName}>
+      <span class="brand__mark">
+        <img
+          src="/logo.png"
+          alt={copy.navigation.logoAlt}
+          width="665"
+          height="665"
+          loading="eager"
+          decoding="async"
+        />
+      </span>
+      <span class="brand__text">
+        <span class="brand__name">{business.shortName}</span>
+        <span class="brand__meta">Konjički klub · Niš</span>
+      </span>
+    </a>
+
+    <nav class="site-header__nav" aria-label="Glavna navigacija">
+      <ul>
+        {
+          navigation.map((item) => {
+            const href = normalize(item.href);
+            const isCurrent = href === currentPath;
+
+            return (
+              <li>
+                <a href={item.href} aria-current={isCurrent ? "page" : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </nav>
+
+    <a class="button button--primary site-header__cta" href={business.phoneUri}>
+      {copy.navigation.desktopCta}
+    </a>
+
+    <MobileNavigation
+      navigation={navigation}
+      pathname={currentPath}
+      phoneHref={business.phoneUri}
+      phoneLabel={copy.navigation.mobileCta}
+      openLabel={copy.navigation.openMenu}
+      closeLabel={copy.navigation.closeMenu}
+      locationLabel={business.locationLabel}
+      arrivalNote={business.arrivalNote}
+    />
+  </div>
+</header>
+
+<script is:inline>
+  const siteHeader = document.querySelector("[data-site-header]");
+  const setScrolledState = () => {
+    if (!siteHeader) return;
+    siteHeader.dataset.scrolled = window.scrollY > 12 ? "true" : "false";
+  };
+
+  setScrolledState();
+  window.addEventListener("scroll", setScrolledState, { passive: true });
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    transition:
+      background-color 220ms ease,
+      border-color 220ms ease;
+  }
+
+  .site-header[data-scrolled="true"] {
+    background: rgba(243, 239, 228, 0.98);
+    border-bottom: var(--border);
+  }
+
+  .site-header__inner {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: var(--space-5);
+    min-height: 92px;
+    padding-inline: 32px;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+
+  .brand__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(3rem, 6vw, 4.5rem);
+    aspect-ratio: 1;
+    border: var(--border);
+    background: var(--color-paper-light);
+    padding: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  .brand__mark img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .brand__text {
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .brand__name {
+    font-family: var(--font-display);
+    font-size: clamp(1.55rem, 2vw, 2rem);
+    line-height: 0.95;
+  }
+
+  .brand__meta {
+    font-family: var(--font-meta);
+    font-size: var(--meta-size);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-muted-text);
+  }
+
+  .site-header__nav ul {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: clamp(1rem, 2vw, 1.65rem);
+  }
+
+  .site-header__nav a {
+    position: relative;
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    font-weight: 500;
+  }
+
+  .site-header__nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 8px;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 200ms ease;
+  }
+
+  .site-header__nav a:hover::after,
+  .site-header__nav a:focus-visible::after,
+  .site-header__nav a[aria-current="page"]::after {
+    transform: scaleX(1);
+  }
+
+  .site-header__nav a[aria-current="page"] {
+    color: var(--color-saddle);
+  }
+
+  @media (max-width: 959px) {
+    .site-header__inner {
+      grid-template-columns: 1fr auto;
+      padding-inline: 18px;
+      min-height: 84px;
+    }
+
+    .site-header__nav,
+    .site-header__cta {
+      display: none;
+    }
+
+    .brand__name {
+      font-size: clamp(1.35rem, 5vw, 1.7rem);
+    }
+
+    .brand__meta {
+      font-size: 0.67rem;
+    }
+
+    .brand__mark {
+      width: clamp(2.75rem, 13vw, 3.4rem);
+    }
+  }
+
+  @media (max-width: 420px) {
+    .brand__text {
+      gap: 0.1rem;
+    }
+
+    .brand__meta {
+      letter-spacing: 0.06em;
+    }
+  }
+</style>

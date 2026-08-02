@@ -1,0 +1,88 @@
+---
+import { Picture } from "astro:assets";
+import trailImage from "../../assets/images/trail/trail-riding-mountain-path.jpg";
+import { copy } from "../../data/copy";
+import SectionLabel from "../layout/SectionLabel.astro";
+---
+
+<section class="trail-feature surface-ink section-shell">
+  <div class="container section-grid">
+    <SectionLabel number="04" label={copy.home.trail.metadata} />
+
+    <div class="trail-feature__grid">
+      <div class="trail-feature__copy flow-lg">
+        <span class="eyebrow-stack eyebrow">{copy.home.trail.metadata}</span>
+        <h2>{copy.home.trail.title}</h2>
+        <p>{copy.home.trail.intro}</p>
+        <a class="link-arrow" href="/terensko-jahanje/">{copy.home.trail.cta}</a>
+      </div>
+
+      <figure class="trail-feature__photo">
+        <Picture
+          src={trailImage}
+          alt="Jahač prati zemljani put kroz zelenilo tokom jahanja u prirodi."
+          formats={["webp"]}
+          widths={[560, 960, 1440]}
+          sizes="(max-width: 900px) 100vw, 54vw"
+          loading="lazy"
+        />
+      </figure>
+
+      <div class="trail-feature__points">
+        {copy.home.trail.points.map((point) => (
+          <div class="trail-feature__point">
+            <h3>{point.title}</h3>
+            <p>{point.text}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .trail-feature__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .trail-feature__photo {
+    align-self: start;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    overflow: hidden;
+  }
+
+  .trail-feature__photo :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: center 55%;
+  }
+
+  .trail-feature__points {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+    padding-top: var(--space-5);
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .trail-feature__point {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .trail-feature__point p {
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  @media (max-width: 900px) {
+    .trail-feature__grid,
+    .trail-feature__points {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

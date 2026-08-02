@@ -1,0 +1,81 @@
+---
+import { business } from "../data/business";
+
+type Props = {
+  number: string;
+  label: string;
+  title: string;
+  text: string;
+  primaryCta: string;
+  secondaryCta: string;
+  secondaryHref?: string;
+};
+
+const {
+  number,
+  label,
+  title,
+  text,
+  primaryCta,
+  secondaryCta,
+  secondaryHref = "/kontakt/#kontakt-forma"
+} = Astro.props as Props;
+---
+
+<section class="final-cta surface-ink section-shell">
+  <div class="container">
+    <div class="final-cta__inner">
+      <div class="section-label final-cta__label">
+        <span class="section-number">{number}</span>
+        <span class="meta-text">{label}</span>
+      </div>
+
+      <div class="final-cta__content flow-lg">
+        <h2>{title}</h2>
+        <p class="lead">{text}</p>
+        <a class="final-cta__phone" href={business.phoneUri}>
+          {business.displayPhone}
+        </a>
+        <div class="final-cta__actions">
+          <a class="button button--primary" href={business.phoneUri}>{primaryCta}</a>
+          <a class="link-arrow" href={secondaryHref}>{secondaryCta}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .final-cta__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 110px) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+  }
+
+  .final-cta__content {
+    max-width: 920px;
+  }
+
+  .final-cta__phone {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 8vw, 5rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+
+  .final-cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  @media (max-width: 820px) {
+    .final-cta__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

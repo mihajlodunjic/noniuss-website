@@ -1,0 +1,212 @@
+---
+import { Picture } from "astro:assets";
+import heroImage from "../../assets/images/home/hero-riders-forest.jpg";
+import curve from "../../assets/brand/nonius-curve.svg";
+import { business } from "../../data/business";
+import { copy } from "../../data/copy";
+---
+
+<section class="home-hero section-shell">
+  <div class="page-frame home-hero__frame">
+    <div class="container home-hero__inner">
+      <div class="home-hero__copy flow-lg">
+        <span class="eyebrow-stack eyebrow">{copy.home.hero.eyebrow}</span>
+        <h1>{copy.home.hero.title}</h1>
+        <p class="lead">{copy.home.hero.intro}</p>
+
+        <div class="home-hero__actions">
+          <a class="button button--primary" href={business.phoneUri}>
+            {copy.home.hero.primaryCta}
+          </a>
+          <a class="link-arrow" href="#programi">{copy.home.hero.secondaryCta}</a>
+        </div>
+
+        <div class="home-hero__note">
+          <span class="meta-text">Praktična napomena</span>
+          <p>{copy.home.hero.note}</p>
+        </div>
+      </div>
+
+      <div class="home-hero__visual">
+        <div class="home-hero__curve" aria-hidden="true">
+          <img src={curve.src} alt="" />
+        </div>
+        <figure class="home-hero__photo">
+          <Picture
+            src={heroImage}
+            alt="Dvoje jahača prolazi šumskim putem tokom mirnog terenskog jahanja."
+            formats={["webp"]}
+            widths={[720, 1080, 1440]}
+            sizes="(max-width: 820px) 100vw, 54vw"
+            loading="eager"
+            priority
+          />
+        </figure>
+
+        <div class="home-hero__brand-card">
+          <div class="home-hero__brand-mark">
+            <img
+              src="/logo.png"
+              alt={copy.navigation.logoAlt}
+              width="665"
+              height="665"
+              loading="eager"
+              decoding="async"
+            />
+          </div>
+          <div>
+            <span class="meta-text">Porodično imanje</span>
+            <p>{business.locationLabel}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .home-hero {
+    padding-top: clamp(3rem, 6vw, 5rem);
+    padding-bottom: clamp(4.5rem, 8vw, 8rem);
+  }
+
+  .home-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .home-hero__copy {
+    position: relative;
+    z-index: 1;
+  }
+
+  .home-hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  .home-hero__note {
+    display: grid;
+    gap: var(--space-2);
+    padding-top: var(--space-5);
+    border-top: var(--border);
+    color: var(--color-muted-text);
+  }
+
+  .home-hero__visual {
+    position: relative;
+    min-height: 640px;
+  }
+
+  .home-hero__curve {
+    position: absolute;
+    inset: 12% 2% auto auto;
+    width: min(84%, 620px);
+    opacity: 0.34;
+    animation: curve-draw 900ms var(--ease-out) both;
+  }
+
+  .home-hero__curve img {
+    width: 100%;
+    height: auto;
+  }
+
+  .home-hero__photo {
+    position: relative;
+    width: min(100%, 760px);
+    margin-left: auto;
+    border: var(--border);
+    overflow: hidden;
+  }
+
+  .home-hero__photo :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: center 48%;
+  }
+
+  .home-hero__brand-card {
+    position: absolute;
+    left: 0;
+    bottom: 2rem;
+    display: inline-grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-3);
+    align-items: center;
+    padding: var(--space-4);
+    background: rgba(251, 249, 243, 0.96);
+    border: var(--border);
+    max-width: 260px;
+  }
+
+  .home-hero__brand-mark {
+    width: 64px;
+    aspect-ratio: 1;
+    background: var(--color-paper-light);
+    border: var(--border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.35rem;
+  }
+
+  .home-hero__brand-mark img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+  }
+
+  @keyframes curve-draw {
+    from {
+      opacity: 0;
+      transform: translateX(12px);
+    }
+
+    to {
+      opacity: 0.34;
+      transform: translateX(0);
+    }
+  }
+
+  @media (max-width: 900px) {
+    .home-hero__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .home-hero__visual {
+      min-height: initial;
+    }
+
+    .home-hero__photo {
+      width: 100%;
+    }
+
+    .home-hero__brand-card {
+      position: relative;
+      left: auto;
+      bottom: auto;
+      margin-top: -2rem;
+      margin-left: auto;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .home-hero__brand-card {
+      max-width: none;
+      grid-template-columns: 56px 1fr;
+      margin-top: var(--space-4);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-hero__curve {
+      animation: none;
+    }
+  }
+</style>
