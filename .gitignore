@@ -3,3 +3,8 @@ node_modules
 .astro
 playwright-report
 test-results
+preview.err
+preview.out
+preview.out
+preview.err
+.preview.pid
