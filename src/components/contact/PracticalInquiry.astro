@@ -1,11 +1,13 @@
 ---
 import { copy } from "../../data/copy";
 import SectionLabel from "../layout/SectionLabel.astro";
+
+const { number = "03" } = Astro.props as { number?: string };
 ---
 
 <section class="section-shell">
   <div class="container section-grid">
-    <SectionLabel number="02" label="Šta navesti u upitu" />
+    <SectionLabel number={number} label="Šta navesti u upitu" />
 
     <div class="practical-inquiry">
       <div class="page-title-block">
@@ -29,21 +31,28 @@ import SectionLabel from "../layout/SectionLabel.astro";
 <style>
   .practical-inquiry {
     display: grid;
-    gap: var(--space-6);
+    gap: clamp(1.25rem, 2.6vw, 2.15rem);
   }
 
   .practical-inquiry__list {
     display: grid;
-    gap: var(--space-4);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem 1.5rem;
   }
 
   .practical-inquiry__list li {
     display: grid;
-    grid-template-columns: 72px 1fr;
-    gap: var(--space-4);
+    grid-template-columns: 64px 1fr;
+    gap: 0.9rem;
     align-items: start;
-    padding-bottom: var(--space-4);
+    padding-bottom: 1rem;
     border-bottom: var(--border);
+  }
+
+  @media (max-width: 760px) {
+    .practical-inquiry__list {
+      grid-template-columns: 1fr;
+    }
   }
 
   @media (max-width: 560px) {

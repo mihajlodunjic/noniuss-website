@@ -4,11 +4,12 @@ import { copy } from "../../data/copy";
 import SectionLabel from "../layout/SectionLabel.astro";
 
 const endpoint = import.meta.env.PUBLIC_CONTACT_FORM_ENDPOINT?.trim() || "";
+const { number = "04" } = Astro.props as { number?: string };
 ---
 
 <section class="section-shell" id="kontakt-forma">
   <div class="container section-grid">
-    <SectionLabel number="03" label="Kontakt forma" />
+    <SectionLabel number={number} label="Kontakt forma" />
 
     <div class="contact-form">
       <div class="page-title-block">
@@ -17,92 +18,105 @@ const endpoint = import.meta.env.PUBLIC_CONTACT_FORM_ENDPOINT?.trim() || "";
         <p>{copy.contact.form.intro}</p>
       </div>
 
-      {!endpoint && <p class="paper-note">{copy.contact.form.endpointInactive}</p>}
+      {
+        endpoint ? (
+          <form class="contact-form__grid" data-contact-form data-endpoint={endpoint} novalidate>
+            <div class="contact-form__field">
+              <label for="full-name">Ime i prezime</label>
+              <input id="full-name" name="fullName" type="text" placeholder="Vaše ime i prezime" />
+              <p class="error-message" id="error-full-name" data-error-for="fullName"></p>
+            </div>
 
-      <form class="contact-form__grid" data-contact-form data-endpoint={endpoint} novalidate>
-        <div class="contact-form__field">
-          <label for="full-name">Ime i prezime</label>
-          <input id="full-name" name="fullName" type="text" placeholder="Vaše ime i prezime" />
-          <p class="error-message" id="error-full-name" data-error-for="fullName"></p>
-        </div>
+            <div class="contact-form__field">
+              <label for="phone">Telefon</label>
+              <input id="phone" name="phone" type="tel" placeholder="Na primer: 06x xxx xxxx" />
+              <p class="error-message" id="error-phone" data-error-for="phone"></p>
+            </div>
 
-        <div class="contact-form__field">
-          <label for="phone">Telefon</label>
-          <input id="phone" name="phone" type="tel" placeholder="Na primer: 06x xxx xxxx" />
-          <p class="error-message" id="error-phone" data-error-for="phone"></p>
-        </div>
+            <div class="contact-form__field">
+              <label for="email">E-mail</label>
+              <input id="email" name="email" type="email" placeholder="ime@primer.rs" />
+              <p class="error-message" id="error-email" data-error-for="email"></p>
+            </div>
 
-        <div class="contact-form__field">
-          <label for="email">E-mail</label>
-          <input id="email" name="email" type="email" placeholder="ime@primer.rs" />
-          <p class="error-message" id="error-email" data-error-for="email"></p>
-        </div>
+            <div class="contact-form__field">
+              <label for="rider-type">Ko želi da jaše?</label>
+              <select id="rider-type" name="riderType">
+                <option value="">Izaberite jednu opciju</option>
+                <option value="Dete">Dete</option>
+                <option value="Odrasla osoba">Odrasla osoba</option>
+                <option value="Više osoba">Više osoba</option>
+              </select>
+              <p class="error-message" id="error-rider-type" data-error-for="riderType"></p>
+            </div>
 
-        <div class="contact-form__field">
-          <label for="rider-type">Ko želi da jaše?</label>
-          <select id="rider-type" name="riderType">
-            <option value="">Izaberite jednu opciju</option>
-            <option value="Dete">Dete</option>
-            <option value="Odrasla osoba">Odrasla osoba</option>
-            <option value="Više osoba">Više osoba</option>
-          </select>
-          <p class="error-message" id="error-rider-type" data-error-for="riderType"></p>
-        </div>
+            <div class="contact-form__field">
+              <label for="experience">Prethodno iskustvo</label>
+              <select id="experience" name="experience">
+                <option value="">Izaberite nivo iskustva</option>
+                <option value="Prvi susret sa konjem">Prvi susret sa konjem</option>
+                <option value="Nekoliko ranijih časova">Nekoliko ranijih časova</option>
+                <option value="Samostalno jahanje">Samostalno jahanje</option>
+                <option value="Drugo">Drugo</option>
+              </select>
+              <p class="error-message" id="error-experience" data-error-for="experience"></p>
+            </div>
 
-        <div class="contact-form__field">
-          <label for="experience">Prethodno iskustvo</label>
-          <select id="experience" name="experience">
-            <option value="">Izaberite nivo iskustva</option>
-            <option value="Prvi susret sa konjem">Prvi susret sa konjem</option>
-            <option value="Nekoliko ranijih časova">Nekoliko ranijih časova</option>
-            <option value="Samostalno jahanje">Samostalno jahanje</option>
-            <option value="Drugo">Drugo</option>
-          </select>
-          <p class="error-message" id="error-experience" data-error-for="experience"></p>
-        </div>
+            <div class="contact-form__field">
+              <label for="ride-type">Vrsta jahanja</label>
+              <select id="ride-type" name="rideType">
+                <option value="">Izaberite šta vas zanima</option>
+                <option value="Škola jahanja">Škola jahanja</option>
+                <option value="Terensko jahanje">Terensko jahanje</option>
+                <option value="Nisam siguran/na">Nisam siguran/na</option>
+              </select>
+              <p class="error-message" id="error-ride-type" data-error-for="rideType"></p>
+            </div>
 
-        <div class="contact-form__field">
-          <label for="ride-type">Vrsta jahanja</label>
-          <select id="ride-type" name="rideType">
-            <option value="">Izaberite šta vas zanima</option>
-            <option value="Škola jahanja">Škola jahanja</option>
-            <option value="Terensko jahanje">Terensko jahanje</option>
-            <option value="Nisam siguran/na">Nisam siguran/na</option>
-          </select>
-          <p class="error-message" id="error-ride-type" data-error-for="rideType"></p>
-        </div>
+            <div class="contact-form__field contact-form__field--wide">
+              <label for="preferred-time">Željeni termin</label>
+              <input
+                id="preferred-time"
+                name="preferredTime"
+                type="text"
+                placeholder="Navedite dan ili period koji vam odgovara"
+              />
+              <p class="error-message" id="error-preferred-time" data-error-for="preferredTime"></p>
+            </div>
 
-        <div class="contact-form__field contact-form__field--wide">
-          <label for="preferred-time">Željeni termin</label>
-          <input
-            id="preferred-time"
-            name="preferredTime"
-            type="text"
-            placeholder="Navedite dan ili period koji vam odgovara"
-          />
-          <p class="error-message" id="error-preferred-time" data-error-for="preferredTime"></p>
-        </div>
+            <div class="contact-form__field contact-form__field--wide">
+              <label for="message">Poruka</label>
+              <textarea
+                id="message"
+                name="message"
+                rows="6"
+                placeholder="Navedite uzrast deteta, broj osoba i pitanja koja imate."
+              ></textarea>
+              <p class="error-message" id="error-message" data-error-for="message"></p>
+            </div>
 
-        <div class="contact-form__field contact-form__field--wide">
-          <label for="message">Poruka</label>
-          <textarea
-            id="message"
-            name="message"
-            rows="6"
-            placeholder="Navedite uzrast deteta, broj osoba i pitanja koja imate."
-          ></textarea>
-          <p class="error-message" id="error-message" data-error-for="message"></p>
-        </div>
+            <p class="contact-form__privacy">{copy.contact.form.privacy}</p>
 
-        <p class="contact-form__privacy">{copy.contact.form.privacy}</p>
-
-        <div class="contact-form__footer">
-          <button class="button button--primary" type="submit" data-submit-button>
-            {copy.contact.form.submit}
-          </button>
-          <p class="contact-form__status" data-form-status aria-live="polite"></p>
-        </div>
-      </form>
+            <div class="contact-form__footer">
+              <button class="button button--primary" type="submit" data-submit-button>
+                {copy.contact.form.submit}
+              </button>
+              <p class="contact-form__status" data-form-status aria-live="polite"></p>
+            </div>
+          </form>
+        ) : (
+          <div class="contact-form__inactive utility-card">
+            <div class="contact-form__inactive-copy">
+              <span class="meta-text">Direktan dogovor</span>
+              <p>{copy.contact.form.endpointInactive}</p>
+            </div>
+            <div class="contact-form__inactive-actions">
+              <a class="button button--primary" href={business.phoneUri}>Pozovite klub</a>
+              <a class="link-arrow" href={`mailto:${business.email}`}>Pošaljite e-mail</a>
+            </div>
+          </div>
+        )
+      }
 
       <div class="contact-form__direct">
         <span class="meta-text">Direktan kontakt</span>
@@ -256,13 +270,17 @@ const endpoint = import.meta.env.PUBLIC_CONTACT_FORM_ENDPOINT?.trim() || "";
 <style>
   .contact-form {
     display: grid;
-    gap: var(--space-6);
+    gap: clamp(1.35rem, 2.8vw, 2.25rem);
   }
 
   .contact-form__grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-5);
+    padding: clamp(1.2rem, 2.8vw, 1.9rem);
+    border: var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(251, 249, 243, 0.9);
   }
 
   .contact-form__field {
@@ -284,7 +302,7 @@ const endpoint = import.meta.env.PUBLIC_CONTACT_FORM_ENDPOINT?.trim() || "";
     min-height: 52px;
     padding: 0.9rem 1rem;
     border: var(--border);
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-sm);
     background: var(--color-paper-light);
   }
 
@@ -311,12 +329,33 @@ const endpoint = import.meta.env.PUBLIC_CONTACT_FORM_ENDPOINT?.trim() || "";
     min-height: 1.5rem;
   }
 
+  .contact-form__inactive {
+    display: grid;
+    gap: 1rem;
+    padding: clamp(1.2rem, 2.8vw, 1.7rem);
+  }
+
+  .contact-form__inactive-copy {
+    display: grid;
+    gap: 0.55rem;
+  }
+
+  .contact-form__inactive-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem 1rem;
+    align-items: center;
+  }
+
   .contact-form__direct {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-4);
     align-items: center;
-    padding-top: var(--space-2);
+    padding: 0.95rem 1rem;
+    border: var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(220, 224, 212, 0.35);
   }
 
   .contact-form__direct a {
@@ -332,6 +371,16 @@ const endpoint = import.meta.env.PUBLIC_CONTACT_FORM_ENDPOINT?.trim() || "";
     .contact-form__privacy,
     .contact-form__footer {
       grid-column: auto;
+    }
+
+    .contact-form__inactive-actions,
+    .contact-form__footer {
+      align-items: stretch;
+    }
+
+    .contact-form__inactive-actions .button,
+    .contact-form__footer .button {
+      width: 100%;
     }
   }
 </style>

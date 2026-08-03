@@ -1,6 +1,6 @@
 ---
-import pastureImage from "../assets/images/contact/horse-pasture-atmosphere.jpg";
-import horseCare from "../assets/images/home/horse-care-detail.jpg";
+import horseHead from "../assets/images/home/horse-head-stable.jpg";
+import humanHorseTouch from "../assets/images/home/human-horse-touch.jpg";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ContentPageLayout from "../layouts/ContentPageLayout.astro";
 import EditorialImage from "../components/EditorialImage.astro";
@@ -41,9 +41,15 @@ const breadcrumbs = [
       { name: "Početna", href: "/" },
       { name: "O klubu", href: "/o-klubu/" }
     ]}
-    image={pastureImage}
-    imageAlt="Konj stoji na otvorenom pašnjaku u prirodnom okruženju."
+    image={horseHead}
+    imageAlt="Portret konja na vratima boksa u mirnom štalskom ambijentu."
     tone="sage"
+    titleMaxWidth="13.4ch"
+    introMaxWidth="35rem"
+    imageRatio="16 / 11"
+    imageRatioMobile="4 / 3"
+    imagePosition="center 34%"
+    imageFilter="var(--image-filter-soft)"
   />
 
   <section class="section-shell">
@@ -73,9 +79,11 @@ const breadcrumbs = [
     label="Rad sa ljudima"
     title={copy.about.people.title}
     text={copy.about.people.text}
-    image={horseCare}
-    alt="Priprema opreme pored konja u mirnom štalskom trenutku."
+    image={humanHorseTouch}
+    alt="Ruka nežno dodiruje konja tokom tihog i pažljivog prilaska."
     reverse
+    imageFilter="var(--image-filter-soft)"
+    titleMaxWidth="14ch"
   />
 
   <section class="section-shell">
@@ -116,6 +124,7 @@ const breadcrumbs = [
     gap: var(--space-4);
     padding: clamp(1.4rem, 4vw, 2rem);
     border: var(--border);
+    border-radius: var(--radius-md);
     background: var(--color-paper-light);
   }
 

@@ -43,6 +43,11 @@ const breadcrumbs = [
     ]}
     image={ridingLesson}
     imageAlt="Početnica uči položaj u sedlu tokom časa jahanja."
+    titleMaxWidth="13ch"
+    introMaxWidth="35rem"
+    imageRatio="16 / 11"
+    imageRatioMobile="4 / 3"
+    imagePosition="center 46%"
   />
 
   <section class="section-shell">
@@ -142,8 +147,9 @@ const breadcrumbs = [
   .school-grid__card {
     display: grid;
     gap: var(--space-3);
-    padding: var(--space-5);
+    padding: clamp(1.15rem, 2.6vw, 1.6rem);
     border: var(--border);
+    border-radius: var(--radius-md);
     background: var(--color-paper-light);
   }
 

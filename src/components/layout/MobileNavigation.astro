@@ -216,7 +216,7 @@ const currentPath = normalize(pathname || "/");
     link.addEventListener("click", () => closeMenu({ returnFocus: false }))
   );
 
-  const desktopMedia = window.matchMedia("(min-width: 960px)");
+  const desktopMedia = window.matchMedia("(min-width: 1120px)");
   const onMediaChange = (event) => {
     if (event.matches && menuToggle?.getAttribute("aria-expanded") === "true") {
       closeMenu({ returnFocus: false });
@@ -239,7 +239,7 @@ const currentPath = normalize(pathname || "/");
     align-items: center;
     justify-content: center;
     border: var(--border);
-    border-radius: var(--radius-xs);
+    border-radius: var(--radius-sm);
     background: var(--color-paper-light);
   }
 
@@ -290,8 +290,8 @@ const currentPath = normalize(pathname || "/");
     inset: 0;
     display: grid;
     align-content: start;
-    gap: var(--space-6);
-    padding: 7rem 1.4rem 2rem;
+    gap: var(--space-5);
+    padding: calc(var(--header-height-mobile) + 1.1rem) 1.25rem 2rem;
     background: var(--color-paper);
     transform: translateY(-12px);
     opacity: 0;
@@ -310,7 +310,7 @@ const currentPath = normalize(pathname || "/");
     display: grid;
     gap: var(--space-2);
     padding-right: 2.5rem;
-    color: var(--color-muted-text);
+    color: #56564f;
   }
 
   .mobile-overlay__call {
@@ -319,16 +319,16 @@ const currentPath = normalize(pathname || "/");
 
   .mobile-overlay__list {
     display: grid;
-    gap: var(--space-3);
+    gap: var(--space-2);
   }
 
   .mobile-overlay__list a {
     display: inline-flex;
     min-height: 48px;
     align-items: center;
-    padding-block: 0.25rem;
+    padding-block: 0.15rem;
     font-family: var(--font-display);
-    font-size: clamp(1.85rem, 8vw, 2.5rem);
+    font-size: clamp(1.6rem, 7vw, 2.15rem);
     line-height: 1;
     border-bottom: var(--border);
   }
@@ -337,7 +337,7 @@ const currentPath = normalize(pathname || "/");
     color: var(--color-saddle);
   }
 
-  @media (max-width: 959px) {
+  @media (max-width: 1119px) {
     .mobile-nav {
       display: block;
     }

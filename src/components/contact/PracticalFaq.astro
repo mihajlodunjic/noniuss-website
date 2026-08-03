@@ -1,11 +1,13 @@
 ---
 import { faqs } from "../../data/faqs";
 import SectionLabel from "../layout/SectionLabel.astro";
+
+const { number = "06" } = Astro.props as { number?: string };
 ---
 
 <section class="section-shell">
   <div class="container section-grid">
-    <SectionLabel number="05" label="Praktična pitanja" />
+    <SectionLabel number={number} label="Praktična pitanja" />
 
     <div class="faq-block">
       <div class="page-title-block">

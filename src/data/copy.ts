@@ -132,7 +132,7 @@ export const copy = {
         "Škola jahanja ili terensko jahanje",
         "Željeni dan i okvirno vreme"
       ],
-      primaryCta: "Pozovite 069 1662 138",
+      primaryCta: "Pozovite klub",
       secondaryCta: "Pošaljite upit"
     },
     location: {

@@ -16,6 +16,11 @@ type Props = {
   tone?: "paper" | "sage";
   sizes?: string;
   widths?: number[];
+  imageRatio?: string;
+  imageRatioMobile?: string;
+  imagePosition?: string;
+  imageFilter?: string;
+  titleMaxWidth?: string;
 };
 
 const {
@@ -30,13 +35,25 @@ const {
   reverse = false,
   tone = "paper",
   sizes = "(max-width: 820px) 100vw, 56vw",
-  widths = [480, 800, 1280]
+  widths = [480, 800, 1280],
+  imageRatio = "4 / 5",
+  imageRatioMobile = "4 / 3",
+  imagePosition = "center center",
+  imageFilter = "var(--image-filter-balanced)",
+  titleMaxWidth = "14ch"
 } = Astro.props as Props;
 
 const paragraphs = Array.isArray(text) ? text : [text];
+const sectionStyle = [
+  `--editorial-ratio:${imageRatio}`,
+  `--editorial-ratio-mobile:${imageRatioMobile}`,
+  `--editorial-image-position:${imagePosition}`,
+  `--editorial-image-filter:${imageFilter}`,
+  `--editorial-title-max:${titleMaxWidth}`
+].join(";");
 ---
 
-<section class={`editorial editorial--${tone} section-shell`}>
+<section class={`editorial editorial--${tone} section-shell`} style={sectionStyle}>
   <div class="container">
     <div class={`editorial__grid ${reverse ? "editorial__grid--reverse" : ""}`}>
       <SectionLabel number={number} label={label} />
@@ -75,8 +92,8 @@ const paragraphs = Array.isArray(text) ? text : [text];
   .editorial__grid {
     display: grid;
     grid-template-columns: minmax(0, 110px) minmax(0, 1.1fr) minmax(0, 0.95fr);
-    gap: clamp(1.5rem, 4vw, 3rem);
-    align-items: center;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    align-items: start;
   }
 
   .editorial__grid--reverse .editorial__figure {
@@ -88,16 +105,24 @@ const paragraphs = Array.isArray(text) ? text : [text];
   }
 
   .editorial__figure {
-    margin-right: -6vw;
+    margin-right: clamp(-3rem, -2vw, 0rem);
+    border-radius: var(--radius-lg);
+    background: rgba(220, 224, 212, 0.58);
+    overflow: hidden;
   }
 
   .editorial__figure picture {
-    overflow: hidden;
+    display: block;
+    aspect-ratio: var(--editorial-ratio);
   }
 
   .editorial__figure :global(img) {
     width: 100%;
-    height: auto;
+    height: 100%;
+    aspect-ratio: var(--editorial-ratio);
+    object-fit: cover;
+    object-position: var(--editorial-image-position);
+    filter: var(--editorial-image-filter);
     transition: transform 220ms ease;
   }
 
@@ -116,13 +141,23 @@ const paragraphs = Array.isArray(text) ? text : [text];
     gap: var(--space-4);
   }
 
+  .editorial__content h2 {
+    max-width: var(--editorial-title-max);
+  }
+
   .editorial__aside {
     max-width: 34ch;
   }
 
+  .editorial__grid--reverse .editorial__figure {
+    margin-right: 0;
+    margin-left: clamp(-3rem, -2vw, 0rem);
+  }
+
   @media (max-width: 1024px) {
-    .editorial__figure {
-      margin-right: 0;
+    .editorial__figure,
+    .editorial__grid--reverse .editorial__figure {
+      margin-inline: 0;
     }
   }
 
@@ -134,6 +169,11 @@ const paragraphs = Array.isArray(text) ? text : [text];
     .editorial__grid--reverse .editorial__figure,
     .editorial__grid--reverse .editorial__content {
       order: initial;
+    }
+
+    .editorial__figure picture,
+    .editorial__figure :global(img) {
+      aspect-ratio: var(--editorial-ratio-mobile);
     }
   }
 </style>

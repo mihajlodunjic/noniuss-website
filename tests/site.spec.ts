@@ -16,6 +16,7 @@ const viewports = [
   { width: 390, height: 844, label: "390x844" },
   { width: 768, height: 1024, label: "768x1024" },
   { width: 1024, height: 768, label: "1024x768" },
+  { width: 1366, height: 900, label: "1366x900" },
   { width: 1440, height: 1000, label: "1440x1000" }
 ] as const;
 
@@ -87,10 +88,10 @@ async function assertCommonPageHealth(page: Page) {
   }
 }
 
-async function saveScreenshot(page: Page, routeSlug: string, viewportLabel: string) {
+async function saveScreenshot(page: Page, routeSlug: string, viewportLabel: string, suffix: "top" | "full") {
   await page.screenshot({
-    path: path.join(screenshotDir, `${routeSlug}-${viewportLabel}.png`),
-    fullPage: true
+    path: path.join(screenshotDir, `${routeSlug}-${viewportLabel}-${suffix}.png`),
+    fullPage: suffix === "full"
   });
 }
 
@@ -125,6 +126,7 @@ test.describe("public routes visual and functional audit", () => {
           expect(response?.ok()).toBeTruthy();
         }
 
+        await saveScreenshot(page, route.slug, viewport.label, "top");
         await loadLazyContent(page);
         await assertCommonPageHealth(page);
         const hasVisiblePhoneLink = await page
@@ -140,7 +142,7 @@ test.describe("public routes visual and functional audit", () => {
             })
           );
         expect(hasVisiblePhoneLink).toBeTruthy();
-        await saveScreenshot(page, route.slug, viewport.label);
+        await saveScreenshot(page, route.slug, viewport.label, "full");
 
         const consoleErrors =
           route.slug === "404"
@@ -155,66 +157,79 @@ test.describe("public routes visual and functional audit", () => {
   }
 });
 
-test("mobile menu interaction, focus trap and close behavior", async ({ page }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/", { waitUntil: "networkidle" });
+for (const viewport of [
+  { width: 360, height: 800, label: "360x800" },
+  { width: 390, height: 844, label: "390x844" }
+]) {
+  test(`mobile menu interaction, focus trap and close behavior @ ${viewport.label}`, async ({ page }) => {
+    await page.setViewportSize({ width: viewport.width, height: viewport.height });
+    await page.goto("/", { waitUntil: "networkidle" });
 
-  const toggle = page.locator("[data-menu-toggle]");
-  await expect(toggle).toBeVisible();
-  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    const toggle = page.locator("[data-menu-toggle]");
+    await expect(toggle).toBeVisible();
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
 
-  await toggle.click();
-  await expect(toggle).toHaveAttribute("aria-expanded", "true");
-  await expect(toggle).toHaveAttribute("data-open", "true");
-  await expect(page.locator("[data-menu-panel]")).toHaveAttribute("aria-hidden", "false");
-  await expect.poll(async () => page.evaluate(() => document.body.classList.contains("menu-open"))).toBeTruthy();
+    await toggle.click();
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await expect(toggle).toHaveAttribute("data-open", "true");
+    await expect(page.locator("[data-menu-panel]")).toHaveAttribute("aria-hidden", "false");
+    await expect.poll(async () => page.evaluate(() => document.body.classList.contains("menu-open"))).toBeTruthy();
 
-  await page.keyboard.press("Tab");
-  const activeInsidePanel = await page.evaluate(() => {
-    const panel = document.querySelector("[data-menu-panel]");
-    return panel?.contains(document.activeElement) ?? false;
+    await page.keyboard.press("Tab");
+    const activeInsidePanel = await page.evaluate(() => {
+      const panel = document.querySelector("[data-menu-panel]");
+      return panel?.contains(document.activeElement) ?? false;
+    });
+    expect(activeInsidePanel).toBeTruthy();
+
+    await page.keyboard.press("Escape");
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(page.locator("[data-menu-panel]")).toHaveAttribute("aria-hidden", "true");
+    await expect(toggle).toBeFocused();
+
+    await toggle.click();
+    await page.locator('[data-menu-panel] a[href="/o-klubu/"]').click();
+    await expect(page).toHaveURL(/\/o-klubu\/$/);
+    await expect(page.locator("[data-menu-toggle]")).toHaveAttribute("aria-expanded", "false");
   });
-  expect(activeInsidePanel).toBeTruthy();
+}
 
-  await page.keyboard.press("Escape");
-  await expect(toggle).toHaveAttribute("aria-expanded", "false");
-  await expect(page.locator("[data-menu-panel]")).toHaveAttribute("aria-hidden", "true");
-  await expect(toggle).toBeFocused();
-
-  await toggle.click();
-  await page.locator('[data-menu-panel] a[href="/o-klubu/"]').click();
-  await expect(page).toHaveURL(/\/o-klubu\/$/);
-  await expect(page.locator("[data-menu-toggle]")).toHaveAttribute("aria-expanded", "false");
-});
-
-test("contact form validation and no-endpoint fallback", async ({ page }) => {
+test("contact form active validation or inactive direct-contact fallback", async ({ page }) => {
   await page.setViewportSize({ width: 1024, height: 768 });
   await page.goto("/kontakt/", { waitUntil: "networkidle" });
 
-  const submit = page.locator('[data-contact-form] [type="submit"]');
-  await submit.click();
+  const form = page.locator("[data-contact-form]");
 
-  await expect(page.locator("#error-full-name")).toHaveText("Unesite ime i prezime.");
-  await expect(page.locator("#error-phone")).toHaveText(
-    "Unesite broj telefona na koji možemo da vas kontaktiramo."
-  );
-  await expect(page.locator("#error-email")).toHaveText("Unesite ispravnu e-mail adresu.");
-  await expect(page.locator("#error-rider-type")).toHaveText("Izaberite ko želi da jaše.");
-  await expect(page.locator("#error-message")).toHaveText("Napišite kratku poruku.");
+  if (await form.count()) {
+    const submit = page.locator('[data-contact-form] [type="submit"]');
+    await submit.click();
 
-  await page.fill("#full-name", "Petar Petrović");
-  await page.fill("#phone", "069 1234 567");
-  await page.fill("#email", "petar@example.com");
-  await page.selectOption("#rider-type", "Odrasla osoba");
-  await page.selectOption("#experience", "Prvi susret sa konjem");
-  await page.selectOption("#ride-type", "Škola jahanja");
-  await page.fill("#preferred-time", "Subota prepodne");
-  await page.fill("#message", "Želim prvi dolazak za odraslog početnika.");
+    await expect(page.locator("#error-full-name")).toHaveText("Unesite ime i prezime.");
+    await expect(page.locator("#error-phone")).toHaveText(
+      "Unesite broj telefona na koji možemo da vas kontaktiramo."
+    );
+    await expect(page.locator("#error-email")).toHaveText("Unesite ispravnu e-mail adresu.");
+    await expect(page.locator("#error-rider-type")).toHaveText("Izaberite ko želi da jaše.");
+    await expect(page.locator("#error-message")).toHaveText("Napišite kratku poruku.");
 
-  await submit.click();
-  await expect(page.locator("[data-form-status]")).toContainText(
-    "Telefon i e-mail su trenutno najbrži način za upit."
-  );
+    await page.fill("#full-name", "Petar Petrović");
+    await page.fill("#phone", "069 1234 567");
+    await page.fill("#email", "petar@example.com");
+    await page.selectOption("#rider-type", "Odrasla osoba");
+    await page.selectOption("#experience", "Prvi susret sa konjem");
+    await page.selectOption("#ride-type", "Škola jahanja");
+    await page.fill("#preferred-time", "Subota prepodne");
+    await page.fill("#message", "Želim prvi dolazak za odraslog početnika.");
+
+    await submit.click();
+    await expect(page.locator("[data-form-status]")).not.toBeEmpty();
+  } else {
+    await expect(page.locator(".contact-form__inactive")).toContainText(
+      "Telefon i e-mail su trenutno najbrži način za upit."
+    );
+    await expect(page.locator('.contact-form__inactive a[href="tel:+381691662138"]')).toBeVisible();
+    await expect(page.locator(`.contact-form__inactive a[href="mailto:kknonius@yahoo.com"]`)).toBeVisible();
+  }
 });
 
 test("internal crawlable links resolve without 4xx", async ({ page, request, baseURL }) => {

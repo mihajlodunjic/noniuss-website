@@ -41,6 +41,8 @@ const breadcrumbs = [
     ctaHref="tel:+381691662138"
     secondaryCtaLabel={copy.contact.hero.secondaryCta}
     secondaryCtaHref="https://www.google.com/maps/search/?api=1&query=Gornje%20Me%C4%91urovo%20bb%2C%2018000%20Ni%C5%A1"
+    titleMaxWidth="11.4ch"
+    introMaxWidth="33rem"
     breadcrumbs={[
       { name: "Početna", href: "/" },
       { name: "Lokacija i kontakt", href: "/kontakt/" }
@@ -52,11 +54,11 @@ const breadcrumbs = [
     ]}
   />
 
-  <ContactDetails />
-  <PracticalInquiry />
-  <ContactForm />
+  <ContactDetails number="02" />
+  <PracticalInquiry number="03" />
+  <ContactForm number="04" />
   <LocationPanel
-    number="04"
+    number="05"
     label="Lokacija"
     title={copy.contact.location.title}
     text={copy.contact.location.text}
@@ -64,5 +66,5 @@ const breadcrumbs = [
     primaryCta={copy.contact.location.cta}
     compact
   />
-  <PracticalFaq />
+  <PracticalFaq number="06" />
 </BaseLayout>

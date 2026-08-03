@@ -1,19 +1,19 @@
 ---
 import { Picture } from "astro:assets";
-import horseCare from "../../assets/images/home/horse-care-detail.jpg";
 import horseHead from "../../assets/images/home/horse-head-stable.jpg";
 import pasture from "../../assets/images/contact/horse-pasture-atmosphere.jpg";
+import ridingLesson from "../../assets/images/school/riding-lesson-beginner.jpg";
 import { copy } from "../../data/copy";
 import SectionLabel from "../layout/SectionLabel.astro";
 
 const images = [
   {
-    src: horseCare,
-    alt: "Ruka priprema opremu pored konja u štalskom ambijentu."
+    src: horseHead,
+    alt: "Glava konja mirno proviruje iz štalskog prostora."
   },
   {
-    src: horseHead,
-    alt: "Blizak kadar glave konja koji mirno gleda kroz vrata boksa."
+    src: ridingLesson,
+    alt: "Početnica uz vođenje uči prve pokrete u sedlu na otvorenom."
   },
   {
     src: pasture,
@@ -58,44 +58,67 @@ const images = [
 <style>
   .atmosphere {
     display: grid;
-    gap: var(--space-6);
+    gap: clamp(1.75rem, 3vw, 2.5rem);
   }
 
   .atmosphere__board {
     display: grid;
-    grid-template-columns: 1.1fr 0.82fr 0.92fr;
-    gap: var(--space-5);
+    grid-template-columns: 1.02fr 0.94fr 1fr;
+    gap: clamp(1rem, 2vw, 1.5rem);
+    align-items: start;
   }
 
   .atmosphere__item {
     display: grid;
-    gap: var(--space-3);
+    gap: 0.9rem;
+  }
+
+  .atmosphere__item :global(picture) {
+    display: block;
+    border: var(--border);
+    border-radius: var(--radius-lg);
+    background: rgba(220, 224, 212, 0.55);
+    overflow: hidden;
   }
 
   .atmosphere__item :global(img) {
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
+    filter: var(--image-filter-balanced);
   }
 
   .atmosphere__item:nth-child(1) :global(img) {
-    aspect-ratio: 4 / 5;
-    object-position: center;
+    aspect-ratio: 4 / 4.6;
+    object-position: center 30%;
   }
 
   .atmosphere__item:nth-child(2) :global(img) {
-    aspect-ratio: 1 / 1;
-    object-position: center 40%;
+    aspect-ratio: 4 / 4.7;
+    object-position: center 48%;
   }
 
   .atmosphere__item:nth-child(3) :global(img) {
-    aspect-ratio: 3 / 4;
-    object-position: center;
+    aspect-ratio: 4 / 4.8;
+    object-position: center 62%;
+    filter: var(--image-filter-warm);
+  }
+
+  .atmosphere__item:nth-child(2) {
+    padding-top: clamp(0rem, 1.6vw, 1rem);
   }
 
   @media (max-width: 900px) {
     .atmosphere__board {
       grid-template-columns: 1fr;
+    }
+
+    .atmosphere__item:nth-child(2) {
+      padding-top: 0;
+    }
+
+    .atmosphere__item :global(img) {
+      aspect-ratio: 4 / 3;
     }
   }
 </style>

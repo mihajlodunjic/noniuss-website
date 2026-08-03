@@ -2,11 +2,13 @@
 import { business } from "../../data/business";
 import { copy } from "../../data/copy";
 import SectionLabel from "../layout/SectionLabel.astro";
+
+const { number = "02" } = Astro.props as { number?: string };
 ---
 
 <section class="section-shell">
   <div class="container section-grid">
-    <SectionLabel number="01" label="Kontakt podaci" />
+    <SectionLabel number={number} label="Kontakt podaci" />
 
     <div class="contact-details">
       <div class="page-title-block">
@@ -59,7 +61,7 @@ import SectionLabel from "../layout/SectionLabel.astro";
 <style>
   .contact-details {
     display: grid;
-    gap: var(--space-6);
+    gap: clamp(1.5rem, 3vw, 2.4rem);
   }
 
   .contact-details__grid {
@@ -70,10 +72,15 @@ import SectionLabel from "../layout/SectionLabel.astro";
 
   .contact-details__row {
     display: grid;
-    gap: var(--space-2);
-    padding: var(--space-4);
+    gap: 0.55rem;
+    padding: 1rem 1.05rem;
     border: var(--border);
+    border-radius: var(--radius-md);
     background: var(--color-paper-light);
+    transition:
+      border-color 180ms ease,
+      background-color 180ms ease,
+      transform 180ms ease;
   }
 
   .contact-details__row dt {
@@ -81,17 +88,28 @@ import SectionLabel from "../layout/SectionLabel.astro";
     font-size: var(--meta-size);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-muted-text);
+    color: #595850;
+  }
+
+  .contact-details__row dd {
+    font-size: clamp(1.08rem, 1rem + 0.35vw, 1.2rem);
   }
 
   .contact-details__row dd a {
     font-weight: 600;
   }
 
+  .contact-details__row:has(a:hover),
+  .contact-details__row:has(a:focus-visible) {
+    background: #f7f3e8;
+    border-color: rgba(146, 94, 56, 0.55);
+    transform: translateY(-1px);
+  }
+
   .contact-details__actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-4);
+    gap: 0.9rem 1.1rem;
   }
 
   @media (max-width: 700px) {

@@ -79,15 +79,20 @@ const currentPath = normalize(pathname);
   .site-header {
     position: sticky;
     top: 0;
-    z-index: 50;
+    z-index: 90;
+    background: rgba(243, 239, 228, 0.985);
+    border-bottom: 1px solid rgba(21, 22, 18, 0.08);
+    backdrop-filter: blur(3px) saturate(1.05);
     transition:
       background-color 220ms ease,
-      border-color 220ms ease;
+      border-color 220ms ease,
+      box-shadow 220ms ease;
   }
 
   .site-header[data-scrolled="true"] {
-    background: rgba(243, 239, 228, 0.98);
-    border-bottom: var(--border);
+    background: rgba(243, 239, 228, 0.99);
+    border-bottom-color: rgba(21, 22, 18, 0.14);
+    box-shadow: 0 1px 0 rgba(21, 22, 18, 0.04);
   }
 
   .site-header__inner {
@@ -95,7 +100,7 @@ const currentPath = normalize(pathname);
     grid-template-columns: auto 1fr auto;
     align-items: center;
     gap: var(--space-5);
-    min-height: 92px;
+    min-height: var(--header-height);
     padding-inline: 32px;
   }
 
@@ -113,6 +118,7 @@ const currentPath = normalize(pathname);
     width: clamp(3rem, 6vw, 4.5rem);
     aspect-ratio: 1;
     border: var(--border);
+    border-radius: var(--radius-sm);
     background: var(--color-paper-light);
     padding: 0.35rem;
     flex-shrink: 0;
@@ -140,14 +146,14 @@ const currentPath = normalize(pathname);
     font-size: var(--meta-size);
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--color-muted-text);
+    color: #56564f;
   }
 
   .site-header__nav ul {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: clamp(1rem, 2vw, 1.65rem);
+    gap: clamp(0.85rem, 1.55vw, 1.4rem);
   }
 
   .site-header__nav a {
@@ -181,11 +187,11 @@ const currentPath = normalize(pathname);
     color: var(--color-saddle);
   }
 
-  @media (max-width: 959px) {
+  @media (max-width: 1119px) {
     .site-header__inner {
       grid-template-columns: 1fr auto;
       padding-inline: 18px;
-      min-height: 84px;
+      min-height: var(--header-height-mobile);
     }
 
     .site-header__nav,

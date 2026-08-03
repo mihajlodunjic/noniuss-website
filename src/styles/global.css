@@ -33,6 +33,19 @@ section {
   position: relative;
 }
 
+section[id],
+[id] {
+  scroll-margin-top: calc(var(--header-height-mobile) + 24px);
+}
+
+.content-page-hero + .section-shell {
+  padding-top: clamp(2.75rem, 4.5vw, 4.5rem);
+}
+
+.home-hero + .section-shell {
+  padding-top: clamp(3rem, 5vw, 4.75rem);
+}
+
 a,
 button,
 input,
@@ -65,7 +78,7 @@ summary {
 .section-grid {
   display: grid;
   grid-template-columns: minmax(0, 120px) minmax(0, 1fr);
-  gap: var(--space-5);
+  gap: clamp(1rem, 3vw, 2rem);
 }
 
 .content-grid {
@@ -130,7 +143,7 @@ summary {
 
 .page-title-block {
   display: grid;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .thin-rule {
@@ -146,11 +159,13 @@ summary {
   background: var(--color-paper-light);
   border: var(--border);
   padding: var(--space-4);
+  border-radius: var(--radius-md);
 }
 
 .utility-card {
   border: var(--border);
   background: var(--color-paper-light);
+  border-radius: var(--radius-md);
 }
 
 .error-message {
@@ -190,7 +205,14 @@ summary {
   }
 
   .section-shell {
-    padding-block: clamp(4rem, 12vw, 5.5rem);
+    padding-block: clamp(4rem, 12vw, 5rem);
+  }
+}
+
+@media (min-width: 960px) {
+  section[id],
+  [id] {
+    scroll-margin-top: calc(var(--header-height) + 24px);
   }
 }
 

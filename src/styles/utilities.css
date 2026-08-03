@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  color: var(--color-muted-text);
+  color: #58574f;
 }
 
 .eyebrow-stack::before {
@@ -37,8 +37,9 @@
 .section-label {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  color: var(--color-muted-text);
+  gap: 6px;
+  padding-top: 0.35rem;
+  color: #58574f;
 }
 
 .section-number {
@@ -51,12 +52,15 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 48px;
-  padding: 0.75rem 1.1rem;
-  border-radius: var(--radius-xs);
+  min-height: 50px;
+  padding: 0.85rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
   font-weight: 600;
+  line-height: 1.1;
   transition:
     background-color 200ms ease,
+    border-color 200ms ease,
     color 200ms ease,
     transform 200ms ease;
 }
@@ -69,6 +73,7 @@
 .button--primary:hover,
 .button--primary:focus-visible {
   background: var(--color-forest-hover);
+  transform: translateY(-1px);
 }
 
 .button--ghost {
@@ -100,6 +105,17 @@
 .link-arrow:hover::after,
 .link-arrow:focus-visible::after {
   transform: translateX(4px);
+}
+
+.link-arrow {
+  min-height: 44px;
+  gap: 0.5rem;
+  padding-block: 0.25rem;
+  line-height: 1.2;
+}
+
+.link-arrow::after {
+  content: "→";
 }
 
 .surface-paper {

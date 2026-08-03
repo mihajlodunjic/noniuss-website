@@ -44,21 +44,29 @@ import SectionLabel from "../layout/SectionLabel.astro";
   .trail-feature__grid {
     display: grid;
     grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
-    gap: clamp(1.5rem, 4vw, 3rem);
+    gap: clamp(1.25rem, 3vw, 2.5rem);
   }
 
   .trail-feature__photo {
     align-self: start;
     border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: var(--radius-lg);
+    background: rgba(220, 224, 212, 0.22);
     overflow: hidden;
+  }
+
+  .trail-feature__photo :global(picture) {
+    display: block;
+    aspect-ratio: 16 / 10;
   }
 
   .trail-feature__photo :global(img) {
     width: 100%;
-    height: auto;
+    height: 100%;
     aspect-ratio: 16 / 10;
     object-fit: cover;
     object-position: center 55%;
+    filter: var(--image-filter-balanced);
   }
 
   .trail-feature__points {
