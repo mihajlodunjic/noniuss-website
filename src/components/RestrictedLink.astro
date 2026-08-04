@@ -1,0 +1,21 @@
+---
+import { getRestrictedHrefState } from "../utils/linkPolicy";
+
+type Props = {
+  href: string;
+  allowHome?: boolean;
+  class?: string;
+};
+
+const { href, allowHome = false, ...rest } = Astro.props as Props & Record<string, unknown>;
+const { enabled, href: resolvedHref } = getRestrictedHrefState(href, { allowHome });
+---
+
+<a
+  {...rest}
+  href={resolvedHref}
+  aria-disabled={enabled ? undefined : "true"}
+  data-disabled-link={enabled ? undefined : "true"}
+>
+  <slot />
+</a>

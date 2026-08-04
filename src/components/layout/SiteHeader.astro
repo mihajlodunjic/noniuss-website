@@ -1,5 +1,6 @@
 ---
 import { business } from "../../data/business";
+import RestrictedLink from "../RestrictedLink.astro";
 import { copy } from "../../data/copy";
 import { navigation } from "../../data/navigation";
 import MobileNavigation from "./MobileNavigation.astro";
@@ -37,9 +38,13 @@ const currentPath = normalize(pathname);
 
             return (
               <li>
-                <a href={item.href} aria-current={isCurrent ? "page" : undefined}>
+                <RestrictedLink
+                  href={item.href}
+                  allowHome
+                  aria-current={isCurrent ? "page" : undefined}
+                >
                   {item.label}
-                </a>
+                </RestrictedLink>
               </li>
             );
           })

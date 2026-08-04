@@ -1,4 +1,6 @@
 ---
+import RestrictedLink from "./RestrictedLink.astro";
+
 type Props = {
   number: string;
   title: string;
@@ -12,7 +14,7 @@ const { number, title, description, metadata, href, ctaLabel } = Astro.props as 
 ---
 
 <article class="service-row">
-  <a class="service-row__link" href={href}>
+  <RestrictedLink class="service-row__link" href={href}>
     <span class="service-row__number section-number">{number}</span>
     <div class="service-row__body">
       <h3>{title}</h3>
@@ -22,7 +24,7 @@ const { number, title, description, metadata, href, ctaLabel } = Astro.props as 
       <span class="data-pill">{metadata}</span>
       <span class="link-arrow">{ctaLabel}</span>
     </div>
-  </a>
+  </RestrictedLink>
 </article>
 
 <style>

@@ -1,6 +1,7 @@
 ---
 import { business } from "../../data/business";
 import { copy } from "../../data/copy";
+import RestrictedLink from "../RestrictedLink.astro";
 import SectionLabel from "../layout/SectionLabel.astro";
 ---
 
@@ -30,9 +31,9 @@ import SectionLabel from "../layout/SectionLabel.astro";
           <a class="button button--primary" href={business.phoneUri}>
             {copy.home.callPrep.primaryCta}
           </a>
-          <a class="link-arrow" href="/kontakt/#kontakt-forma">
+          <RestrictedLink class="link-arrow" href="/kontakt/#kontakt-forma">
             {copy.home.callPrep.secondaryCta}
-          </a>
+          </RestrictedLink>
         </div>
       </aside>
     </div>

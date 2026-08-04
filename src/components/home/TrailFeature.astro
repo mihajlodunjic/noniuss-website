@@ -2,6 +2,7 @@
 import { Picture } from "astro:assets";
 import trailImage from "../../assets/images/trail/trail-riding-mountain-path.jpg";
 import { copy } from "../../data/copy";
+import RestrictedLink from "../RestrictedLink.astro";
 import SectionLabel from "../layout/SectionLabel.astro";
 ---
 
@@ -14,7 +15,9 @@ import SectionLabel from "../layout/SectionLabel.astro";
         <span class="eyebrow-stack eyebrow">{copy.home.trail.metadata}</span>
         <h2>{copy.home.trail.title}</h2>
         <p>{copy.home.trail.intro}</p>
-        <a class="link-arrow" href="/terensko-jahanje/">{copy.home.trail.cta}</a>
+        <RestrictedLink class="link-arrow" href="/terensko-jahanje/">
+          {copy.home.trail.cta}
+        </RestrictedLink>
       </div>
 
       <figure class="trail-feature__photo">

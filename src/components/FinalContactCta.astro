@@ -1,5 +1,6 @@
 ---
 import { business } from "../data/business";
+import RestrictedLink from "./RestrictedLink.astro";
 
 type Props = {
   number: string;
@@ -9,6 +10,7 @@ type Props = {
   primaryCta: string;
   secondaryCta: string;
   secondaryHref?: string;
+  restrictSecondaryToHome?: boolean;
 };
 
 const {
@@ -18,7 +20,8 @@ const {
   text,
   primaryCta,
   secondaryCta,
-  secondaryHref = "/kontakt/#kontakt-forma"
+  secondaryHref = "/kontakt/#kontakt-forma",
+  restrictSecondaryToHome = false
 } = Astro.props as Props;
 ---
 
@@ -38,7 +41,13 @@ const {
         </a>
         <div class="final-cta__actions">
           <a class="button button--primary" href={business.phoneUri}>{primaryCta}</a>
-          <a class="link-arrow" href={secondaryHref}>{secondaryCta}</a>
+          <RestrictedLink
+            class="link-arrow"
+            href={secondaryHref}
+            allowHome={restrictSecondaryToHome}
+          >
+            {secondaryCta}
+          </RestrictedLink>
         </div>
       </div>
     </div>

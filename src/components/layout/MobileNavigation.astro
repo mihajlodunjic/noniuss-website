@@ -1,4 +1,5 @@
 ---
+import RestrictedLink from "../RestrictedLink.astro";
 import type { NavigationItem } from "../../data/navigation";
 
 type Props = {
@@ -91,13 +92,14 @@ const currentPath = normalize(pathname || "/");
 
                 return (
                   <li>
-                    <a
+                    <RestrictedLink
                       href={item.href}
+                      allowHome
                       aria-current={isCurrent ? "page" : undefined}
                       data-menu-link
                     >
                       {item.label}
-                    </a>
+                    </RestrictedLink>
                   </li>
                 );
               })
@@ -350,7 +352,9 @@ const currentPath = normalize(pathname || "/");
 
     menuLinks.forEach((link) => {
       link.addEventListener("click", () => {
-        closeMenu({ returnFocus: false });
+        if (link instanceof HTMLAnchorElement && link.getAttribute("href")) {
+          closeMenu({ returnFocus: false });
+        }
       });
     });
 

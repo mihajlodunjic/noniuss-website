@@ -1,5 +1,6 @@
 ---
 import { business } from "../../data/business";
+import RestrictedLink from "../RestrictedLink.astro";
 import { copy } from "../../data/copy";
 import { navigation } from "../../data/navigation";
 
@@ -21,7 +22,7 @@ const currentYear = new Date().getFullYear();
         <ul>
           {navigation.map((item) => (
             <li>
-              <a href={item.href}>{item.label}</a>
+              <RestrictedLink href={item.href} allowHome>{item.label}</RestrictedLink>
             </li>
           ))}
         </ul>

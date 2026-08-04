@@ -2,6 +2,7 @@
 import { Picture } from "astro:assets";
 import heroImage from "../../assets/images/home/hero-riders-forest.jpg";
 import curve from "../../assets/brand/nonius-curve.svg";
+import RestrictedLink from "../RestrictedLink.astro";
 import { business } from "../../data/business";
 import { copy } from "../../data/copy";
 ---
@@ -18,7 +19,9 @@ import { copy } from "../../data/copy";
           <a class="button button--primary" href={business.phoneUri}>
             {copy.home.hero.primaryCta}
           </a>
-          <a class="link-arrow" href="#programi">{copy.home.hero.secondaryCta}</a>
+          <RestrictedLink class="link-arrow" href="#programi">
+            {copy.home.hero.secondaryCta}
+          </RestrictedLink>
         </div>
 
         <div class="home-hero__note">

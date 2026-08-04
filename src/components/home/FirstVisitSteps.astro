@@ -1,5 +1,6 @@
 ---
 import { copy } from "../../data/copy";
+import RestrictedLink from "../RestrictedLink.astro";
 import SectionLabel from "../layout/SectionLabel.astro";
 ---
 
@@ -12,7 +13,9 @@ import SectionLabel from "../layout/SectionLabel.astro";
         <span class="eyebrow-stack eyebrow">{copy.home.firstVisit.metadata}</span>
         <h2>{copy.home.firstVisit.title}</h2>
         <p>{copy.home.firstVisit.intro}</p>
-        <a class="link-arrow" href="/kontakt/#kontakt-forma">{copy.home.firstVisit.cta}</a>
+        <RestrictedLink class="link-arrow" href="/kontakt/#kontakt-forma">
+          {copy.home.firstVisit.cta}
+        </RestrictedLink>
       </div>
 
       <ol class="first-visit__steps">
