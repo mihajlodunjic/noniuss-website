@@ -34,7 +34,7 @@ const { number = "02" } = Astro.props as { number?: string };
         <div class="contact-details__row">
           <dt>{copy.contact.details.instagramLabel}</dt>
           <dd>
-            <a href={business.instagramUrl} target="_blank" rel="noreferrer">
+            <a href={business.instagramUrl} target="_blank" rel="noopener noreferrer">
               {business.instagramHandle}
             </a>
           </dd>
@@ -50,7 +50,7 @@ const { number = "02" } = Astro.props as { number?: string };
         <a class="button button--primary" href={business.phoneUri}>
           {copy.contact.details.phoneCta}
         </a>
-        <a class="link-arrow" href={business.instagramUrl} target="_blank" rel="noreferrer">
+        <a class="link-arrow" href={business.instagramUrl} target="_blank" rel="noopener noreferrer">
           {copy.contact.details.instagramCta}
         </a>
       </div>

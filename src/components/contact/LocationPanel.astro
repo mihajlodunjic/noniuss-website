@@ -30,7 +30,7 @@ const { number, label, title, text, address, primaryCta, secondaryCta, compact =
           <strong>{address}</strong>
         </div>
         <div class="location-panel__actions">
-          <a class="button button--primary" href={business.mapUrl} target="_blank" rel="noreferrer">
+          <a class="button button--primary" href={business.mapUrl} target="_blank" rel="noopener noreferrer">
             {primaryCta}
           </a>
           {secondaryCta && <a class="link-arrow" href={business.phoneUri}>{secondaryCta}</a>}

@@ -18,105 +18,149 @@ const { number = "04" } = Astro.props as { number?: string };
         <p>{copy.contact.form.intro}</p>
       </div>
 
-      {
-        endpoint ? (
-          <form class="contact-form__grid" data-contact-form data-endpoint={endpoint} novalidate>
-            <div class="contact-form__field">
-              <label for="full-name">Ime i prezime</label>
-              <input id="full-name" name="fullName" type="text" placeholder="Vaše ime i prezime" />
-              <p class="error-message" id="error-full-name" data-error-for="fullName"></p>
-            </div>
-
-            <div class="contact-form__field">
-              <label for="phone">Telefon</label>
-              <input id="phone" name="phone" type="tel" placeholder="Na primer: 06x xxx xxxx" />
-              <p class="error-message" id="error-phone" data-error-for="phone"></p>
-            </div>
-
-            <div class="contact-form__field">
-              <label for="email">E-mail</label>
-              <input id="email" name="email" type="email" placeholder="ime@primer.rs" />
-              <p class="error-message" id="error-email" data-error-for="email"></p>
-            </div>
-
-            <div class="contact-form__field">
-              <label for="rider-type">Ko želi da jaše?</label>
-              <select id="rider-type" name="riderType">
-                <option value="">Izaberite jednu opciju</option>
-                <option value="Dete">Dete</option>
-                <option value="Odrasla osoba">Odrasla osoba</option>
-                <option value="Više osoba">Više osoba</option>
-              </select>
-              <p class="error-message" id="error-rider-type" data-error-for="riderType"></p>
-            </div>
-
-            <div class="contact-form__field">
-              <label for="experience">Prethodno iskustvo</label>
-              <select id="experience" name="experience">
-                <option value="">Izaberite nivo iskustva</option>
-                <option value="Prvi susret sa konjem">Prvi susret sa konjem</option>
-                <option value="Nekoliko ranijih časova">Nekoliko ranijih časova</option>
-                <option value="Samostalno jahanje">Samostalno jahanje</option>
-                <option value="Drugo">Drugo</option>
-              </select>
-              <p class="error-message" id="error-experience" data-error-for="experience"></p>
-            </div>
-
-            <div class="contact-form__field">
-              <label for="ride-type">Vrsta jahanja</label>
-              <select id="ride-type" name="rideType">
-                <option value="">Izaberite šta vas zanima</option>
-                <option value="Škola jahanja">Škola jahanja</option>
-                <option value="Terensko jahanje">Terensko jahanje</option>
-                <option value="Nisam siguran/na">Nisam siguran/na</option>
-              </select>
-              <p class="error-message" id="error-ride-type" data-error-for="rideType"></p>
-            </div>
-
-            <div class="contact-form__field contact-form__field--wide">
-              <label for="preferred-time">Željeni termin</label>
-              <input
-                id="preferred-time"
-                name="preferredTime"
-                type="text"
-                placeholder="Navedite dan ili period koji vam odgovara"
-              />
-              <p class="error-message" id="error-preferred-time" data-error-for="preferredTime"></p>
-            </div>
-
-            <div class="contact-form__field contact-form__field--wide">
-              <label for="message">Poruka</label>
-              <textarea
-                id="message"
-                name="message"
-                rows="6"
-                placeholder="Navedite uzrast deteta, broj osoba i pitanja koja imate."
-              ></textarea>
-              <p class="error-message" id="error-message" data-error-for="message"></p>
-            </div>
-
-            <p class="contact-form__privacy">{copy.contact.form.privacy}</p>
-
-            <div class="contact-form__footer">
-              <button class="button button--primary" type="submit" data-submit-button>
-                {copy.contact.form.submit}
-              </button>
-              <p class="contact-form__status" data-form-status aria-live="polite"></p>
-            </div>
-          </form>
-        ) : (
-          <div class="contact-form__inactive utility-card">
-            <div class="contact-form__inactive-copy">
-              <span class="meta-text">Direktan dogovor</span>
-              <p>{copy.contact.form.endpointInactive}</p>
-            </div>
-            <div class="contact-form__inactive-actions">
-              <a class="button button--primary" href={business.phoneUri}>Pozovite klub</a>
-              <a class="link-arrow" href={`mailto:${business.email}`}>Pošaljite e-mail</a>
-            </div>
+      {!endpoint && (
+        <div class="contact-form__endpoint-note utility-card" data-contact-form-note>
+          <div class="contact-form__endpoint-copy">
+            <span class="meta-text">Direktan kontakt</span>
+            <p>{copy.contact.form.endpointInactive}</p>
           </div>
-        )
-      }
+
+          <div class="contact-form__endpoint-actions">
+            <a class="button button--primary" href={business.phoneUri}>Pozovite klub</a>
+            <a class="link-arrow" href={`mailto:${business.email}`}>Pošaljite e-mail</a>
+          </div>
+        </div>
+      )}
+
+      <form
+        class="contact-form__grid"
+        data-contact-form
+        data-endpoint={endpoint}
+        data-endpoint-active={endpoint ? "true" : "false"}
+        method="post"
+        novalidate
+      >
+        <div class="contact-form__field">
+          <label for="full-name">Ime i prezime</label>
+          <input
+            id="full-name"
+            name="fullName"
+            type="text"
+            autocomplete="name"
+            placeholder="Vaše ime i prezime"
+          />
+          <p class="error-message" id="error-full-name" data-error-for="fullName"></p>
+        </div>
+
+        <div class="contact-form__field">
+          <label for="phone">Telefon</label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            autocomplete="tel"
+            inputmode="tel"
+            placeholder="Na primer: 06x xxx xxxx"
+          />
+          <p class="error-message" id="error-phone" data-error-for="phone"></p>
+        </div>
+
+        <div class="contact-form__field">
+          <label for="email">E-mail</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autocomplete="email"
+            placeholder="ime@primer.rs"
+          />
+          <p class="error-message" id="error-email" data-error-for="email"></p>
+        </div>
+
+        <div class="contact-form__field">
+          <label for="rider-type">Ko želi da jaše?</label>
+          <select id="rider-type" name="riderType">
+            <option value="">Izaberite jednu opciju</option>
+            <option value="Dete">Dete</option>
+            <option value="Odrasla osoba">Odrasla osoba</option>
+            <option value="Više osoba">Više osoba</option>
+          </select>
+          <p class="error-message" id="error-rider-type" data-error-for="riderType"></p>
+        </div>
+
+        <div class="contact-form__field">
+          <label for="child-age">Uzrast deteta</label>
+          <input
+            id="child-age"
+            name="childAge"
+            type="text"
+            inputmode="numeric"
+            autocomplete="off"
+            placeholder="Ako dolazi dete, navedite uzrast"
+            aria-describedby="hint-child-age"
+          />
+          <p class="field-hint" id="hint-child-age">Ostavite prazno ako ne dolazi dete.</p>
+          <p class="error-message" id="error-child-age" data-error-for="childAge"></p>
+        </div>
+
+        <div class="contact-form__field">
+          <label for="experience">Prethodno iskustvo</label>
+          <select id="experience" name="experience">
+            <option value="">Izaberite nivo iskustva</option>
+            <option value="Prvi susret sa konjem">Prvi susret sa konjem</option>
+            <option value="Nekoliko ranijih časova">Nekoliko ranijih časova</option>
+            <option value="Samostalno jahanje">Samostalno jahanje</option>
+            <option value="Drugo">Drugo</option>
+          </select>
+          <p class="error-message" id="error-experience" data-error-for="experience"></p>
+        </div>
+
+        <div class="contact-form__field">
+          <label for="ride-type">Vrsta jahanja</label>
+          <select id="ride-type" name="rideType">
+            <option value="">Izaberite šta vas zanima</option>
+            <option value="Škola jahanja">Škola jahanja</option>
+            <option value="Terensko jahanje">Terensko jahanje</option>
+            <option value="Nisam siguran/na">Nisam siguran/na</option>
+          </select>
+          <p class="error-message" id="error-ride-type" data-error-for="rideType"></p>
+        </div>
+
+        <div class="contact-form__field contact-form__field--wide">
+          <label for="preferred-time">Željeni termin</label>
+          <input
+            id="preferred-time"
+            name="preferredTime"
+            type="text"
+            autocomplete="off"
+            placeholder="Navedite dan ili period koji vam odgovara"
+          />
+          <p class="field-hint" id="hint-preferred-time">
+            Ako termin zavisi od vremena ili škole, navedite nekoliko opcija.
+          </p>
+          <p class="error-message" id="error-preferred-time" data-error-for="preferredTime"></p>
+        </div>
+
+        <div class="contact-form__field contact-form__field--wide">
+          <label for="message">Poruka</label>
+          <textarea
+            id="message"
+            name="message"
+            rows="6"
+            placeholder="Navedite uzrast deteta, broj osoba i pitanja koja imate."
+          ></textarea>
+          <p class="error-message" id="error-message" data-error-for="message"></p>
+        </div>
+
+        <p class="contact-form__privacy">{copy.contact.form.privacy}</p>
+
+        <div class="contact-form__footer">
+          <button class="button button--primary" type="submit" data-submit-button>
+            {copy.contact.form.submit}
+          </button>
+          <p class="contact-form__status" data-form-status aria-live="polite"></p>
+        </div>
+      </form>
 
       <div class="contact-form__direct">
         <span class="meta-text">Direktan kontakt</span>
@@ -144,7 +188,8 @@ const { number = "04" } = Astro.props as { number?: string };
     const submitButton = contactForm.querySelector("[data-submit-button]");
     const status = contactForm.querySelector("[data-form-status]");
     const endpoint = contactForm.dataset.endpoint || "";
-    const fields = {
+
+    const fieldMeta = {
       fullName: {
         element: contactForm.elements.namedItem("fullName"),
         message: "Unesite ime i prezime."
@@ -161,82 +206,177 @@ const { number = "04" } = Astro.props as { number?: string };
         element: contactForm.elements.namedItem("riderType"),
         message: "Izaberite ko želi da jaše."
       },
+      childAge: {
+        element: contactForm.elements.namedItem("childAge"),
+        message: "Ako dolazi dete, navedite uzrast."
+      },
+      rideType: {
+        element: contactForm.elements.namedItem("rideType"),
+        message: "Izaberite šta vas zanima."
+      },
       message: {
         element: contactForm.elements.namedItem("message"),
         message: "Napišite kratku poruku."
       }
     };
 
+    const describedByMap = {
+      childAge: ["hint-child-age"],
+      preferredTime: ["hint-preferred-time"]
+    };
+
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phonePattern = /^[+0-9()[\]\s/-]{6,}$/;
+
+    const setStatus = (message = "", tone = "") => {
+      if (!(status instanceof HTMLElement)) return;
+      status.textContent = message;
+      status.className = "contact-form__status";
+
+      if (tone === "success") {
+        status.classList.add("success-message");
+      }
+
+      if (tone === "error") {
+        status.classList.add("error-message");
+      }
+
+      if (tone === "note") {
+        status.classList.add("contact-form__status--note");
+      }
+    };
 
     const setFieldError = (name, message = "") => {
-      const field = fields[name]?.element;
+      const field = fieldMeta[name]?.element;
       const error = contactForm.querySelector(`[data-error-for="${name}"]`);
+      const hintIds = describedByMap[name] || [];
+      const describedBy = [...hintIds];
+
+      if (error instanceof HTMLElement && error.id && message) {
+        describedBy.push(error.id);
+      }
+
       if (field instanceof HTMLElement) {
         field.setAttribute("aria-invalid", message ? "true" : "false");
-        if (error instanceof HTMLElement && error.id) {
-          field.setAttribute("aria-describedby", error.id);
+
+        if (describedBy.length) {
+          field.setAttribute("aria-describedby", describedBy.join(" "));
+        } else {
+          field.removeAttribute("aria-describedby");
         }
       }
+
       if (error instanceof HTMLElement) {
         error.textContent = message;
       }
     };
 
+    const getValue = (name) => {
+      const field = contactForm.elements.namedItem(name);
+      return field && "value" in field ? field.value.trim() : "";
+    };
+
     const validate = () => {
-      let valid = true;
-      const nameValue = fields.fullName.element?.value?.trim?.() || "";
-      const phoneValue = fields.phone.element?.value?.trim?.() || "";
-      const emailValue = fields.email.element?.value?.trim?.() || "";
-      const riderValue = fields.riderType.element?.value || "";
-      const messageValue = fields.message.element?.value?.trim?.() || "";
+      let firstInvalid = null;
+      const riderTypeValue = getValue("riderType");
+      const validationMessages = {
+        fullName: getValue("fullName") ? "" : fieldMeta.fullName.message,
+        phone: phonePattern.test(getValue("phone")) ? "" : fieldMeta.phone.message,
+        email: emailPattern.test(getValue("email")) ? "" : fieldMeta.email.message,
+        riderType: riderTypeValue ? "" : fieldMeta.riderType.message,
+        childAge:
+          riderTypeValue === "Dete" && !getValue("childAge") ? fieldMeta.childAge.message : "",
+        rideType: getValue("rideType") ? "" : fieldMeta.rideType.message,
+        message: getValue("message") ? "" : fieldMeta.message.message
+      };
 
-      setFieldError("fullName", nameValue ? "" : fields.fullName.message);
-      setFieldError("phone", phoneValue ? "" : fields.phone.message);
-      setFieldError(
-        "email",
-        emailValue && emailPattern.test(emailValue) ? "" : fields.email.message
-      );
-      setFieldError("riderType", riderValue ? "" : fields.riderType.message);
-      setFieldError("message", messageValue ? "" : fields.message.message);
+      Object.entries(validationMessages).forEach(([name, message]) => {
+        setFieldError(name, message);
 
-      if (!nameValue || !phoneValue || !emailPattern.test(emailValue) || !riderValue || !messageValue) {
-        valid = false;
+        if (!firstInvalid && message) {
+          const field = fieldMeta[name]?.element;
+          if (field instanceof HTMLElement) {
+            firstInvalid = field;
+          }
+        }
+      });
+
+      if (firstInvalid instanceof HTMLElement) {
+        firstInvalid.focus();
       }
 
-      return valid;
+      return Object.values(validationMessages).every((message) => !message);
     };
+
+    Object.entries(fieldMeta).forEach(([name, meta]) => {
+      if (!(meta.element instanceof HTMLElement)) return;
+      meta.element.addEventListener("input", () => {
+        if (name === "childAge") {
+          const riderTypeValue = getValue("riderType");
+          setFieldError(name, riderTypeValue === "Dete" && !getValue("childAge") ? meta.message : "");
+          return;
+        }
+
+        if (name === "phone") {
+          setFieldError(name, phonePattern.test(getValue("phone")) ? "" : meta.message);
+          return;
+        }
+
+        if (name === "email") {
+          const emailValue = getValue("email");
+          setFieldError(name, emailValue && emailPattern.test(emailValue) ? "" : emailValue ? meta.message : "");
+          return;
+        }
+
+        setFieldError(name, getValue(name) ? "" : "");
+      });
+
+      meta.element.addEventListener("change", () => {
+        if (name === "riderType") {
+          setFieldError(name, getValue(name) ? "" : meta.message);
+          const riderTypeValue = getValue("riderType");
+          setFieldError(
+            "childAge",
+            riderTypeValue === "Dete" && !getValue("childAge") ? fieldMeta.childAge.message : ""
+          );
+          return;
+        }
+
+        if (name === "rideType") {
+          setFieldError(name, getValue(name) ? "" : meta.message);
+        }
+      });
+    });
 
     contactForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-      if (!(status instanceof HTMLElement) || !(submitButton instanceof HTMLButtonElement)) return;
 
-      status.className = "contact-form__status";
+      if (!(submitButton instanceof HTMLButtonElement)) return;
 
       if (!validate()) {
-        status.textContent = "Proverite označena polja pre slanja upita.";
-        status.classList.add("error-message");
+        setStatus("Proverite označena polja pre slanja upita.", "error");
         return;
       }
 
       if (!endpoint) {
-        status.textContent = inactiveMessage;
-        status.classList.add("error-message");
+        setStatus(inactiveMessage, "note");
         return;
       }
 
       submitButton.disabled = true;
       submitButton.textContent = submittingLabel;
+      setStatus("");
 
       const payload = {
-        fullName: contactForm.elements.namedItem("fullName")?.value || "",
-        phone: contactForm.elements.namedItem("phone")?.value || "",
-        email: contactForm.elements.namedItem("email")?.value || "",
-        riderType: contactForm.elements.namedItem("riderType")?.value || "",
-        experience: contactForm.elements.namedItem("experience")?.value || "",
-        rideType: contactForm.elements.namedItem("rideType")?.value || "",
-        preferredTime: contactForm.elements.namedItem("preferredTime")?.value || "",
-        message: contactForm.elements.namedItem("message")?.value || ""
+        fullName: getValue("fullName"),
+        phone: getValue("phone"),
+        email: getValue("email"),
+        riderType: getValue("riderType"),
+        childAge: getValue("childAge"),
+        experience: getValue("experience"),
+        rideType: getValue("rideType"),
+        preferredTime: getValue("preferredTime"),
+        message: getValue("message")
       };
 
       try {
@@ -253,12 +393,10 @@ const { number = "04" } = Astro.props as { number?: string };
         }
 
         contactForm.reset();
-        Object.keys(fields).forEach((name) => setFieldError(name, ""));
-        status.textContent = successMessage;
-        status.classList.add("success-message");
+        Object.keys(fieldMeta).forEach((name) => setFieldError(name, ""));
+        setStatus(successMessage, "success");
       } catch (error) {
-        status.textContent = navigator.onLine ? failureMessage : networkErrorMessage;
-        status.classList.add("error-message");
+        setStatus(navigator.onLine ? failureMessage : networkErrorMessage, "error");
       } finally {
         submitButton.disabled = false;
         submitButton.textContent = submitLabel;
@@ -273,6 +411,24 @@ const { number = "04" } = Astro.props as { number?: string };
     gap: clamp(1.35rem, 2.8vw, 2.25rem);
   }
 
+  .contact-form__endpoint-note {
+    display: grid;
+    gap: 1rem;
+    padding: clamp(1.15rem, 2.6vw, 1.55rem);
+  }
+
+  .contact-form__endpoint-copy {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .contact-form__endpoint-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem 1rem;
+    align-items: center;
+  }
+
   .contact-form__grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -280,7 +436,7 @@ const { number = "04" } = Astro.props as { number?: string };
     padding: clamp(1.2rem, 2.8vw, 1.9rem);
     border: var(--border);
     border-radius: var(--radius-md);
-    background: rgba(251, 249, 243, 0.9);
+    background: rgba(251, 249, 243, 0.92);
   }
 
   .contact-form__field {
@@ -311,6 +467,17 @@ const { number = "04" } = Astro.props as { number?: string };
     resize: vertical;
   }
 
+  .contact-form input[aria-invalid="true"],
+  .contact-form select[aria-invalid="true"],
+  .contact-form textarea[aria-invalid="true"] {
+    border-color: rgba(155, 51, 44, 0.55);
+  }
+
+  .field-hint {
+    color: var(--color-muted-text);
+    font-size: var(--small-size);
+  }
+
   .contact-form__privacy {
     grid-column: 1 / -1;
     color: var(--color-muted-text);
@@ -329,22 +496,9 @@ const { number = "04" } = Astro.props as { number?: string };
     min-height: 1.5rem;
   }
 
-  .contact-form__inactive {
-    display: grid;
-    gap: 1rem;
-    padding: clamp(1.2rem, 2.8vw, 1.7rem);
-  }
-
-  .contact-form__inactive-copy {
-    display: grid;
-    gap: 0.55rem;
-  }
-
-  .contact-form__inactive-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.9rem 1rem;
-    align-items: center;
+  .contact-form__status--note {
+    color: var(--color-muted-text);
+    font-size: var(--small-size);
   }
 
   .contact-form__direct {
@@ -373,12 +527,12 @@ const { number = "04" } = Astro.props as { number?: string };
       grid-column: auto;
     }
 
-    .contact-form__inactive-actions,
+    .contact-form__endpoint-actions,
     .contact-form__footer {
       align-items: stretch;
     }
 
-    .contact-form__inactive-actions .button,
+    .contact-form__endpoint-actions .button,
     .contact-form__footer .button {
       width: 100%;
     }

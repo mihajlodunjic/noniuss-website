@@ -7,6 +7,7 @@ html {
   background: var(--color-paper);
   color: var(--color-ink);
   scrollbar-gutter: stable;
+  scroll-padding-top: calc(var(--header-height-mobile) + 24px);
 }
 
 body {
@@ -27,6 +28,11 @@ html.menu-open {
 
 main {
   display: block;
+}
+
+main:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 8px;
 }
 
 section {
@@ -210,6 +216,10 @@ summary {
 }
 
 @media (min-width: 960px) {
+  html {
+    scroll-padding-top: calc(var(--header-height) + 24px);
+  }
+
   section[id],
   [id] {
     scroll-margin-top: calc(var(--header-height) + 24px);

@@ -43,9 +43,15 @@ const { number = "06" } = Astro.props as { number?: string };
     gap: var(--space-4);
     align-items: center;
     min-height: 44px;
+    padding-block: 0.2rem;
     font-family: var(--font-display);
     font-size: clamp(1.2rem, 2vw, 1.55rem);
     cursor: pointer;
+    list-style: none;
+  }
+
+  .faq-block__item summary::-webkit-details-marker {
+    display: none;
   }
 
   .faq-block__item summary::after {
@@ -62,5 +68,9 @@ const { number = "06" } = Astro.props as { number?: string };
   .faq-block__item p {
     padding-top: var(--space-3);
     color: var(--color-muted-text);
+  }
+
+  .faq-block__item[open] {
+    background: rgba(220, 224, 212, 0.16);
   }
 </style>

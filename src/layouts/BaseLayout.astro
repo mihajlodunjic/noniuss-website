@@ -50,9 +50,39 @@ const resolvedOgImage = ogImage ? canonicalUrl(ogImage) : defaultOgImage;
   <body>
     <a class="skip-link" href="#main-content">{copy.navigation.skipLink}</a>
     <SiteHeader pathname={pathname} />
-    <main id="main-content" data-main>
+    <main id="main-content" data-main tabindex="-1">
       <slot />
     </main>
     <SiteFooter />
+
+    <script is:inline>
+      const skipLink = document.querySelector(".skip-link");
+      const mainContent = document.getElementById("main-content");
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      if (skipLink instanceof HTMLAnchorElement && mainContent instanceof HTMLElement) {
+        const focusMainContent = () => {
+          mainContent.scrollIntoView({
+            block: "start",
+            behavior: prefersReducedMotion.matches ? "auto" : "smooth"
+          });
+          window.requestAnimationFrame(() => {
+            mainContent.focus({ preventScroll: true });
+          });
+        };
+
+        skipLink.addEventListener("click", (event) => {
+          event.preventDefault();
+          focusMainContent();
+          history.replaceState(null, "", "#main-content");
+        });
+
+        window.addEventListener("hashchange", () => {
+          if (window.location.hash === "#main-content") {
+            focusMainContent();
+          }
+        });
+      }
+    </script>
   </body>
 </html>

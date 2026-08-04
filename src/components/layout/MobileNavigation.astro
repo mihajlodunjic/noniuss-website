@@ -27,12 +27,13 @@ const normalize = (href: string) => (href === "/" ? href : href.replace(/\/+$/, 
 const currentPath = normalize(pathname || "/");
 ---
 
-<div class="mobile-nav">
+<div class="mobile-nav" data-mobile-nav>
   <button
     class="mobile-toggle"
     type="button"
     aria-expanded="false"
     aria-controls="mobile-nav-panel"
+    aria-haspopup="dialog"
     aria-label={openLabel}
     data-menu-toggle
   >
@@ -41,189 +42,332 @@ const currentPath = normalize(pathname || "/");
     <span class="mobile-toggle__line"></span>
   </button>
 
-  <div class="mobile-overlay" data-menu-overlay hidden>
-    <div class="mobile-overlay__backdrop" data-menu-backdrop aria-hidden="true"></div>
+  <div class="mobile-overlay" data-menu-overlay data-state="closed" aria-hidden="true" hidden>
     <div
       class="mobile-overlay__panel"
       id="mobile-nav-panel"
       data-menu-panel
-      tabindex="-1"
+      role="dialog"
+      aria-modal="true"
       aria-hidden="true"
+      aria-labelledby="mobile-menu-title"
+      tabindex="-1"
     >
-      <div class="mobile-overlay__meta">
-        <span class="meta-text">{locationLabel}</span>
-        <p>{arrivalNote}</p>
+      <div class="mobile-overlay__header">
+        <div class="mobile-overlay__brand">
+          <span class="mobile-overlay__title" id="mobile-menu-title">Nonius</span>
+          <span class="mobile-overlay__meta meta-text">{locationLabel}</span>
+        </div>
+
+        <button
+          class="mobile-close"
+          type="button"
+          aria-label={closeLabel}
+          data-menu-close
+        >
+          <span class="mobile-close__line"></span>
+          <span class="mobile-close__line"></span>
+        </button>
       </div>
 
-      <a class="button button--primary mobile-overlay__call" href={phoneHref} data-menu-link>
-        {phoneLabel}
-      </a>
+      <div class="mobile-overlay__content">
+        <div class="mobile-overlay__meta-block">
+          <p class="mobile-overlay__arrival">{arrivalNote}</p>
+          <a
+            class="button button--primary mobile-overlay__call"
+            href={phoneHref}
+            data-menu-link
+          >
+            {phoneLabel}
+          </a>
+        </div>
 
-      <nav aria-label="Mobilna navigacija">
-        <ul class="mobile-overlay__list">
-          {
-            navigation.map((item) => {
-              const href = normalize(item.href);
-              const isCurrent = href === currentPath;
+        <nav aria-label="Mobilna navigacija">
+          <ul class="mobile-overlay__list">
+            {
+              navigation.map((item) => {
+                const href = normalize(item.href);
+                const isCurrent = href === currentPath;
 
-              return (
-                <li>
-                  <a
-                    href={item.href}
-                    aria-current={isCurrent ? "page" : undefined}
-                    data-menu-link
-                  >
-                    {item.label}
-                  </a>
-                </li>
-              );
-            })
-          }
-        </ul>
-      </nav>
+                return (
+                  <li>
+                    <a
+                      href={item.href}
+                      aria-current={isCurrent ? "page" : undefined}
+                      data-menu-link
+                    >
+                      {item.label}
+                    </a>
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </nav>
+      </div>
     </div>
   </div>
 </div>
 
 <script define:vars={{ openLabel, closeLabel }} is:inline>
-  const mobileNavRoot = document.querySelector(".mobile-nav");
-  const menuToggle = mobileNavRoot?.querySelector("[data-menu-toggle]");
-  const menuOverlay = mobileNavRoot?.querySelector("[data-menu-overlay]");
-  const menuPanel = mobileNavRoot?.querySelector("[data-menu-panel]");
-  const menuBackdrop = mobileNavRoot?.querySelector("[data-menu-backdrop]");
-  const menuLinks = mobileNavRoot?.querySelectorAll("[data-menu-link]");
-  const inertTargets = Array.from(
-    document.querySelectorAll("[data-main], [data-site-footer]")
-  );
-  let previousFocus = null;
-  let closeTimer = null;
-  let shouldReturnFocus = true;
+  const mobileNavRoot = document.querySelector("[data-mobile-nav]");
 
-  const getFocusableElements = () =>
-    Array.from(
-      menuPanel?.querySelectorAll(
-        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
-      ) || []
-    );
+  if (mobileNavRoot instanceof HTMLElement) {
+    const menuToggle = mobileNavRoot.querySelector("[data-menu-toggle]");
+    const menuOverlay = mobileNavRoot.querySelector("[data-menu-overlay]");
+    const menuPanel = mobileNavRoot.querySelector("[data-menu-panel]");
+    const menuClose = mobileNavRoot.querySelector("[data-menu-close]");
+    const menuLinks = Array.from(mobileNavRoot.querySelectorAll("[data-menu-link]"));
+    const siteHeader = document.querySelector("[data-site-header]");
+    const inertTargets = [
+      ...document.querySelectorAll("[data-main], [data-site-footer]"),
+      ...(siteHeader
+        ? siteHeader.querySelectorAll(".site-header__inner > *:not(.mobile-nav)")
+        : [])
+    ];
+    const desktopMedia = window.matchMedia("(min-width: 1120px)");
+    const reducedMotionMedia = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  const setInert = (state) => {
-    inertTargets.forEach((target) => {
-      target.inert = state;
-    });
-  };
+    let menuState = "closed";
+    let closeTimer = 0;
+    let previousFocus = null;
+    let shouldReturnFocus = true;
+    let lockedScrollY = 0;
 
-  const finishClose = () => {
-    if (!menuOverlay || !menuPanel || !menuToggle) return;
+    const animationDuration = () => (reducedMotionMedia.matches ? 1 : 240);
 
-    menuOverlay.hidden = true;
-    menuToggle.dataset.open = "false";
-    menuToggle.setAttribute("aria-expanded", "false");
-    menuToggle.setAttribute("aria-label", openLabel);
-    menuPanel.setAttribute("aria-hidden", "true");
-    menuOverlay.dataset.state = "closed";
-    document.body.classList.remove("menu-open");
-    document.documentElement.classList.remove("menu-open");
-    setInert(false);
+    const isFocusable = (element) =>
+      element instanceof HTMLElement &&
+      !element.hasAttribute("disabled") &&
+      element.getAttribute("aria-hidden") !== "true" &&
+      element.tabIndex !== -1 &&
+      element.getClientRects().length > 0;
 
-    if (shouldReturnFocus && previousFocus instanceof HTMLElement) {
-      previousFocus.focus();
-    } else if (shouldReturnFocus) {
-      menuToggle.focus();
-    }
-  };
+    const getFocusableElements = () =>
+      Array.from(
+        menuPanel?.querySelectorAll(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ) || []
+      ).filter(isFocusable);
 
-  const closeMenu = ({ returnFocus = true } = {}) => {
-    if (!menuOverlay || !menuPanel || !menuToggle) return;
-    if (closeTimer) clearTimeout(closeTimer);
+    const clearCloseTimer = () => {
+      if (!closeTimer) return;
+      window.clearTimeout(closeTimer);
+      closeTimer = 0;
+    };
 
-    shouldReturnFocus = returnFocus;
-    menuOverlay.dataset.state = "closing";
-    menuPanel.setAttribute("aria-hidden", "true");
-    menuToggle.dataset.open = "false";
-    menuToggle.setAttribute("aria-expanded", "false");
-    menuToggle.setAttribute("aria-label", openLabel);
-    document.body.classList.remove("menu-open");
-    document.documentElement.classList.remove("menu-open");
-    setInert(false);
-    document.removeEventListener("keydown", onMenuKeydown);
-    closeTimer = window.setTimeout(finishClose, 220);
-  };
+    const setExpandedState = (expanded) => {
+      if (!(menuToggle instanceof HTMLElement) || !(menuPanel instanceof HTMLElement) || !(menuOverlay instanceof HTMLElement)) {
+        return;
+      }
 
-  const openMenu = () => {
-    if (!menuOverlay || !menuPanel || !menuToggle) return;
-    if (closeTimer) clearTimeout(closeTimer);
+      menuToggle.dataset.open = expanded ? "true" : "false";
+      menuToggle.setAttribute("aria-expanded", expanded ? "true" : "false");
+      menuToggle.setAttribute("aria-label", expanded ? closeLabel : openLabel);
+      menuPanel.setAttribute("aria-hidden", expanded ? "false" : "true");
+      menuOverlay.setAttribute("aria-hidden", expanded ? "false" : "true");
+    };
 
-    previousFocus = document.activeElement;
-    shouldReturnFocus = true;
-    menuOverlay.hidden = false;
-    menuOverlay.dataset.state = "open";
-    menuToggle.dataset.open = "true";
-    menuToggle.setAttribute("aria-expanded", "true");
-    menuToggle.setAttribute("aria-label", closeLabel);
-    menuPanel.setAttribute("aria-hidden", "false");
-    document.body.classList.add("menu-open");
-    document.documentElement.classList.add("menu-open");
-    setInert(true);
-    document.addEventListener("keydown", onMenuKeydown);
+    const setBackgroundInteractivity = (locked) => {
+      inertTargets.forEach((target) => {
+        if (target instanceof HTMLElement) {
+          target.inert = locked;
+        }
+      });
+    };
 
-    window.requestAnimationFrame(() => {
+    const lockScroll = () => {
+      if (document.body.dataset.menuLocked === "true") return;
+
+      lockedScrollY = window.scrollY;
+      document.body.dataset.menuLocked = "true";
+      document.documentElement.classList.add("menu-open");
+      document.body.classList.add("menu-open");
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${lockedScrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
+    };
+
+    const unlockScroll = () => {
+      if (document.body.dataset.menuLocked !== "true") return;
+
+      const savedScrollY = Number(document.body.style.top.replace("px", "")) || -lockedScrollY;
+
+      document.body.dataset.menuLocked = "false";
+      document.documentElement.classList.remove("menu-open");
+      document.body.classList.remove("menu-open");
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
+      window.scrollTo(0, Math.abs(savedScrollY));
+    };
+
+    const focusFirstControl = () => {
       const focusable = getFocusableElements();
-      (focusable[0] || menuPanel).focus();
+      (focusable[0] || menuClose || menuPanel)?.focus();
+    };
+
+    const handleFocusIn = (event) => {
+      if (!(menuPanel instanceof HTMLElement)) return;
+      if (!["opening", "open", "closing"].includes(menuState)) return;
+      if (!(event.target instanceof Node) || menuPanel.contains(event.target)) return;
+
+      focusFirstControl();
+    };
+
+    const handleKeydown = (event) => {
+      if (!(menuPanel instanceof HTMLElement)) return;
+      if (!["opening", "open", "closing"].includes(menuState)) return;
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeMenu();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusable = getFocusableElements();
+      if (!focusable.length) {
+        event.preventDefault();
+        (menuClose || menuPanel).focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    const attachOpenEvents = () => {
+      document.addEventListener("keydown", handleKeydown);
+      document.addEventListener("focusin", handleFocusIn);
+    };
+
+    const detachOpenEvents = () => {
+      document.removeEventListener("keydown", handleKeydown);
+      document.removeEventListener("focusin", handleFocusIn);
+    };
+
+    const finalizeClose = () => {
+      if (!(menuOverlay instanceof HTMLElement)) return;
+
+      clearCloseTimer();
+      menuState = "closed";
+      menuOverlay.dataset.state = "closed";
+      menuOverlay.hidden = true;
+      setExpandedState(false);
+      setBackgroundInteractivity(false);
+      detachOpenEvents();
+      unlockScroll();
+
+      if (shouldReturnFocus) {
+        (previousFocus instanceof HTMLElement ? previousFocus : menuToggle)?.focus();
+      }
+    };
+
+    function closeMenu({ returnFocus = true, immediate = false } = {}) {
+      if (!(menuOverlay instanceof HTMLElement)) return;
+      if (menuState === "closed") return;
+
+      clearCloseTimer();
+      shouldReturnFocus = returnFocus;
+      menuState = immediate ? "closed" : "closing";
+
+      if (immediate) {
+        finalizeClose();
+        return;
+      }
+
+      menuOverlay.dataset.state = "closing";
+      setExpandedState(false);
+      closeTimer = window.setTimeout(finalizeClose, animationDuration());
+    }
+
+    function openMenu() {
+      if (
+        !(menuToggle instanceof HTMLElement) ||
+        !(menuOverlay instanceof HTMLElement) ||
+        !(menuPanel instanceof HTMLElement)
+      ) {
+        return;
+      }
+
+      if (desktopMedia.matches) return;
+
+      clearCloseTimer();
+
+      if (menuState === "open" || menuState === "opening") {
+        return;
+      }
+
+      previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : menuToggle;
+      shouldReturnFocus = true;
+      menuState = "opening";
+      menuOverlay.hidden = false;
+      menuOverlay.dataset.state = "opening";
+      lockScroll();
+      setBackgroundInteractivity(true);
+      setExpandedState(true);
+      attachOpenEvents();
+
+      window.requestAnimationFrame(() => {
+        if (!(menuOverlay instanceof HTMLElement)) return;
+        menuState = "open";
+        menuOverlay.dataset.state = "open";
+        focusFirstControl();
+      });
+    }
+
+    const resetMenu = () => {
+      closeMenu({ returnFocus: false, immediate: true });
+    };
+
+    menuToggle?.addEventListener("click", () => {
+      if (menuState === "open" || menuState === "opening") {
+        closeMenu();
+      } else {
+        openMenu();
+      }
     });
-  };
 
-  const onMenuKeydown = (event) => {
-    if (!menuPanel || !menuToggle) return;
-
-    if (event.key === "Escape") {
-      event.preventDefault();
+    menuClose?.addEventListener("click", () => {
       closeMenu();
-      return;
+    });
+
+    menuLinks.forEach((link) => {
+      link.addEventListener("click", () => {
+        closeMenu({ returnFocus: false });
+      });
+    });
+
+    desktopMedia.addEventListener("change", (event) => {
+      if (event.matches) {
+        resetMenu();
+      }
+    });
+
+    window.addEventListener("pagehide", () => {
+      resetMenu();
+    });
+
+    if (desktopMedia.matches) {
+      resetMenu();
     }
-
-    if (event.key !== "Tab") return;
-
-    const focusable = getFocusableElements();
-    if (!focusable.length) {
-      event.preventDefault();
-      menuPanel.focus();
-      return;
-    }
-
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
-  };
-
-  menuToggle?.addEventListener("click", () => {
-    const isOpen = menuToggle.getAttribute("aria-expanded") === "true";
-    if (isOpen) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
-  });
-
-  menuBackdrop?.addEventListener("click", () => closeMenu());
-  menuLinks?.forEach((link) =>
-    link.addEventListener("click", () => closeMenu({ returnFocus: false }))
-  );
-
-  const desktopMedia = window.matchMedia("(min-width: 1120px)");
-  const onMediaChange = (event) => {
-    if (event.matches && menuToggle?.getAttribute("aria-expanded") === "true") {
-      closeMenu({ returnFocus: false });
-    }
-  };
-
-  desktopMedia.addEventListener("change", onMediaChange);
+  }
 </script>
 
 <style>
@@ -231,7 +375,8 @@ const currentPath = normalize(pathname || "/");
     display: none;
   }
 
-  .mobile-toggle {
+  .mobile-toggle,
+  .mobile-close {
     position: relative;
     display: inline-flex;
     width: 52px;
@@ -241,13 +386,21 @@ const currentPath = normalize(pathname || "/");
     border: var(--border);
     border-radius: var(--radius-sm);
     background: var(--color-paper-light);
+    color: var(--color-ink);
+    flex-shrink: 0;
   }
 
-  .mobile-toggle__line {
+  .mobile-toggle {
+    z-index: 1;
+  }
+
+  .mobile-toggle__line,
+  .mobile-close__line {
     position: absolute;
     width: 20px;
     height: 2px;
-    background: var(--color-ink);
+    background: currentColor;
+    transform-origin: center;
     transition:
       transform 220ms var(--ease-out),
       opacity 220ms ease;
@@ -273,44 +426,96 @@ const currentPath = normalize(pathname || "/");
     transform: rotate(-45deg);
   }
 
+  .mobile-close__line:nth-child(1) {
+    transform: rotate(45deg);
+  }
+
+  .mobile-close__line:nth-child(2) {
+    transform: rotate(-45deg);
+  }
+
   .mobile-overlay {
     position: fixed;
     inset: 0;
-    z-index: 60;
-  }
-
-  .mobile-overlay__backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(21, 22, 18, 0.34);
-  }
-
-  .mobile-overlay__panel {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    align-content: start;
-    gap: var(--space-5);
-    padding: calc(var(--header-height-mobile) + 1.1rem) 1.25rem 2rem;
-    background: var(--color-paper);
-    transform: translateY(-12px);
+    z-index: 150;
+    background: rgba(243, 239, 228, 0.98);
     opacity: 0;
-    transition:
-      opacity 220ms ease,
-      transform 220ms var(--ease-out);
-    box-shadow: var(--shadow-menu);
+    transition: opacity 220ms ease;
   }
 
-  .mobile-overlay[data-state="open"] .mobile-overlay__panel {
-    transform: translateY(0);
+  .mobile-overlay[data-state="opening"],
+  .mobile-overlay[data-state="open"],
+  .mobile-overlay[data-state="closing"] {
     opacity: 1;
   }
 
-  .mobile-overlay__meta {
+  .mobile-overlay__panel {
+    height: 100dvh;
+    min-height: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding:
+      calc(env(safe-area-inset-top) + 0.5rem)
+      18px
+      calc(env(safe-area-inset-bottom) + 1.1rem);
+    background:
+      linear-gradient(180deg, rgba(251, 249, 243, 0.99), rgba(243, 239, 228, 0.985)),
+      var(--color-paper);
+    box-shadow: var(--shadow-menu);
+    transform: translateY(-14px);
+    transition: transform 220ms var(--ease-out);
+  }
+
+  .mobile-overlay[data-state="opening"] .mobile-overlay__panel,
+  .mobile-overlay[data-state="open"] .mobile-overlay__panel {
+    transform: translateY(0);
+  }
+
+  .mobile-overlay__header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
     display: grid;
-    gap: var(--space-2);
-    padding-right: 2.5rem;
-    color: #56564f;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--space-4);
+    align-items: start;
+    padding-block: 0.25rem 1rem;
+    background:
+      linear-gradient(180deg, rgba(243, 239, 228, 0.98) 0%, rgba(243, 239, 228, 0.98) 82%, rgba(243, 239, 228, 0) 100%);
+  }
+
+  .mobile-overlay__brand {
+    display: grid;
+    gap: 0.28rem;
+    padding-top: 0.3rem;
+  }
+
+  .mobile-overlay__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 5vw, 1.85rem);
+    line-height: 0.95;
+  }
+
+  .mobile-overlay__meta {
+    color: var(--color-muted-text);
+  }
+
+  .mobile-overlay__content {
+    display: grid;
+    gap: clamp(1rem, 3vw, 1.5rem);
+    padding-top: 0.2rem;
+  }
+
+  .mobile-overlay__meta-block {
+    display: grid;
+    gap: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: var(--border);
+  }
+
+  .mobile-overlay__arrival {
+    color: #55544d;
+    max-width: 32ch;
   }
 
   .mobile-overlay__call {
@@ -319,18 +524,22 @@ const currentPath = normalize(pathname || "/");
 
   .mobile-overlay__list {
     display: grid;
-    gap: var(--space-2);
   }
 
   .mobile-overlay__list a {
     display: inline-flex;
-    min-height: 48px;
+    width: 100%;
+    min-height: 54px;
     align-items: center;
-    padding-block: 0.15rem;
-    font-family: var(--font-display);
-    font-size: clamp(1.6rem, 7vw, 2.15rem);
-    line-height: 1;
+    padding-block: 0.45rem;
     border-bottom: var(--border);
+    font-family: var(--font-display);
+    font-size: clamp(1.55rem, 5.8vw, 2.1rem);
+    line-height: 0.98;
+  }
+
+  .mobile-overlay__list li:first-child a {
+    border-top: var(--border);
   }
 
   .mobile-overlay__list a[aria-current="page"] {
@@ -340,6 +549,48 @@ const currentPath = normalize(pathname || "/");
   @media (max-width: 1119px) {
     .mobile-nav {
       display: block;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .mobile-toggle,
+    .mobile-close {
+      width: 50px;
+      height: 50px;
+    }
+
+    .mobile-overlay__panel {
+      padding-inline: 18px;
+    }
+  }
+
+  @media (max-height: 430px) and (max-width: 1119px) {
+    .mobile-overlay__header {
+      padding-bottom: 0.7rem;
+    }
+
+    .mobile-overlay__content {
+      gap: 0.85rem;
+    }
+
+    .mobile-overlay__meta-block {
+      gap: 0.75rem;
+      padding-bottom: 0.85rem;
+    }
+
+    .mobile-overlay__list a {
+      min-height: 44px;
+      font-size: clamp(1.2rem, 4vw, 1.45rem);
+      padding-block: 0.25rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-overlay,
+    .mobile-overlay__panel,
+    .mobile-toggle__line,
+    .mobile-close__line {
+      transition-duration: 0.01ms;
     }
   }
 </style>
