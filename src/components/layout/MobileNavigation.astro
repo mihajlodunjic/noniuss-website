@@ -138,6 +138,12 @@ const currentPath = normalize(pathname || "/");
 
     const animationDuration = () => (reducedMotionMedia.matches ? 1 : 240);
 
+    const portalOverlay = () => {
+      if (!(menuOverlay instanceof HTMLElement)) return;
+      if (menuOverlay.parentElement === document.body) return;
+      document.body.append(menuOverlay);
+    };
+
     const isFocusable = (element) =>
       element instanceof HTMLElement &&
       !element.hasAttribute("disabled") &&
@@ -337,6 +343,8 @@ const currentPath = normalize(pathname || "/");
     const resetMenu = () => {
       closeMenu({ returnFocus: false, immediate: true });
     };
+
+    portalOverlay();
 
     menuToggle?.addEventListener("click", () => {
       if (menuState === "open" || menuState === "opening") {
